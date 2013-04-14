@@ -15,7 +15,7 @@ import android.widget.TimePicker;
  * <p/>
  * inspired by https://github.com/commonsguy/cw-lunchlist/blob/master/19-Alarm/LunchList/src/apt/tutorial
  * /TimePreference.java
-        */
+ */
 
 public class TimePreference extends DialogPreference {
 
@@ -53,7 +53,7 @@ public class TimePreference extends DialogPreference {
             lastMinute = picker.getCurrentMinute();
             int mins = lastHour * 60 + lastMinute;
             if (callChangeListener(mins)) {
-                Log.d(TAG, "Persisting "+getKey()+" = "+mins+" mins");
+                Log.d(TAG, "Persisting " + getKey() + " = " + mins + " mins");
                 persistInt(mins);
             }
         }
@@ -89,7 +89,7 @@ public class TimePreference extends DialogPreference {
     private int getMins(boolean restoreValue, int defaultMins) {
         if (restoreValue) {
             int mins = getPersistedInt(defaultMins);
-            Log.d(TAG, "Loaded "+getKey()+"="+mins+"mins");
+            Log.d(TAG, "Loaded " + getKey() + "=" + mins + "mins");
             return mins;
         } else {
             return defaultMins;

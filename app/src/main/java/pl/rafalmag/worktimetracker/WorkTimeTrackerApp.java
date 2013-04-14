@@ -67,7 +67,7 @@ public class WorkTimeTrackerApp extends Application {
     }
 
     public Minutes getNormalWorkHours() {
-        int mins = PreferenceManager.getDefaultSharedPreferences(this).getInt("work_time",8*60);
+        int mins = PreferenceManager.getDefaultSharedPreferences(this).getInt("work_time", 8 * 60);
         return Minutes.minutes(mins);
     }
 }
