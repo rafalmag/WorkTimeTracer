@@ -4,9 +4,10 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.TimePicker.OnTimeChangedListener;
@@ -46,8 +47,8 @@ public class WorkTimeTracker extends Activity {
         initTimePickers();
         initOverHoursText();
         initDiffText();
-        initNowButtons();
-        initLogButton();
+//        initNowButtons();
+//        initLogButton();
     }
 
     private void initTimePickers() {
@@ -60,7 +61,7 @@ public class WorkTimeTracker extends Activity {
         int stopHour = preferences.getInt(STOP_HOUR, currentHourOfDay);
         int stopMins = preferences.getInt(STOP_MINS, currentMinuteOfHour);
         boolean is24h = is24h();
-        initTimePicker((TimePicker) findViewById(R.id.startTimePicker), is24h,startHour,startMins);
+        initTimePicker((TimePicker) findViewById(R.id.startTimePicker), is24h, startHour, startMins);
         initTimePicker((TimePicker) findViewById(R.id.stopTimePicker), is24h, stopHour, stopMins);
     }
 
@@ -76,6 +77,7 @@ public class WorkTimeTracker extends Activity {
         timePicker.setCurrentHour(hour);
         timePicker.setCurrentMinute(mins);
     }
+
     private void initOverHoursText() {
         MinutesHolder overHoursHolder = ((WorkTimeTrackerApp) getApplication()).getOverHoursHolder();
         overHoursHolder.addObserver(new Observer() {
@@ -108,40 +110,54 @@ public class WorkTimeTracker extends Activity {
         diffText.setText("Diff: " + DateUtils.minutesToText(diff));
     }
 
-    private void initNowButtons() {
-        initNowButton((Button) findViewById(R.id.startNow), (TimePicker) findViewById(R.id.startTimePicker));
-        initNowButton((Button) findViewById(R.id.stopNow), (TimePicker) findViewById(R.id.stopTimePicker));
+//    private void initNowButtons() {
+//        initNowButton((Button) findViewById(R.id.startNow), (TimePicker) findViewById(R.id.startTimePicker));
+//        initNowButton((Button) findViewById(R.id.stopNow), (TimePicker) findViewById(R.id.stopTimePicker));
+//    }
+//
+//    private void initNowButton(Button button, final TimePicker timePicker) {
+//        button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                DateTime now = new DateTime();
+//                timePicker.setCurrentHour(now.getHourOfDay());
+//                timePicker.setCurrentMinute(now.getMinuteOfHour());
+//            }
+//        });
+//    }
+
+    public void now(View view) {
+        TimePicker timePicker = getTimePickerForNowButton(view);
+        DateTime now = new DateTime();
+        timePicker.setCurrentHour(now.getHourOfDay());
+        timePicker.setCurrentMinute(now.getMinuteOfHour());
     }
 
-
-    private void initNowButton(Button button, final TimePicker timePicker) {
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DateTime now = new DateTime();
-                timePicker.setCurrentHour(now.getHourOfDay());
-                timePicker.setCurrentMinute(now.getMinuteOfHour());
-            }
-        });
-    }
-    private void initLogButton() {
-        Button logButton = (Button) findViewById(R.id.log);
-        logButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                WorkTimeTrackerApp app = ((WorkTimeTrackerApp) getApplication());
-                Minutes diff = app.getDiffHolder().getMinutes();
-                Minutes todayOverHours = diff.minus(app.getNormalWorkHours());
-                Minutes totalOverHours = app.getOverHoursHolder().getMinutes();
-                Minutes newOverHours = totalOverHours.plus(todayOverHours);
-                app.getOverHoursHolder().setMinutes(newOverHours);
-            }
-        });
+    private TimePicker getTimePickerForNowButton(View view) {
+        switch (view.getId()) {
+            case R.id.startNow:
+                return (TimePicker) findViewById(R.id.startTimePicker);
+            case R.id.stopNow:
+                return (TimePicker) findViewById(R.id.stopTimePicker);
+            default:
+                throw new IllegalStateException(view + " is neither start nor stop button.");
+        }
     }
 
-
-
-
+    public void log(View view) {
+//        Button logButton = (Button) findViewById(R.id.log);
+//        logButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+        WorkTimeTrackerApp app = ((WorkTimeTrackerApp) getApplication());
+        Minutes diff = app.getDiffHolder().getMinutes();
+        Minutes todayOverHours = diff.minus(app.getNormalWorkHours());
+        Minutes totalOverHours = app.getOverHoursHolder().getMinutes();
+        Minutes newOverHours = totalOverHours.plus(todayOverHours);
+        app.getOverHoursHolder().setMinutes(newOverHours);
+//            }
+//        });
+    }
 
     @Override
     protected void onStop() {
@@ -153,15 +169,13 @@ public class WorkTimeTracker extends Activity {
     private void saveTimePickerValues() {
         SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
         TimePicker startTimePicker = (TimePicker) findViewById(R.id.startTimePicker);
-        editor.putInt(START_HOUR,startTimePicker.getCurrentHour());
-        editor.putInt(START_MINS,startTimePicker.getCurrentMinute());
+        editor.putInt(START_HOUR, startTimePicker.getCurrentHour());
+        editor.putInt(START_MINS, startTimePicker.getCurrentMinute());
         TimePicker stopTimePicker = (TimePicker) findViewById(R.id.stopTimePicker);
-        editor.putInt(STOP_HOUR,stopTimePicker.getCurrentHour());
-        editor.putInt(STOP_MINS,stopTimePicker.getCurrentMinute());
+        editor.putInt(STOP_HOUR, stopTimePicker.getCurrentHour());
+        editor.putInt(STOP_MINS, stopTimePicker.getCurrentMinute());
         editor.commit();
     }
-
-
 
 
     @Override
@@ -169,6 +183,17 @@ public class WorkTimeTracker extends Activity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.work_time_tracker, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                Log.d(TAG, "Menu action settings clicked");
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 }
