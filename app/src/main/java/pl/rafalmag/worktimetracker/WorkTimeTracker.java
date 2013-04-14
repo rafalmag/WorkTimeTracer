@@ -1,6 +1,7 @@
 package pl.rafalmag.worktimetracker;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.Menu;
@@ -19,6 +20,11 @@ import org.joda.time.Minutes;
 public class WorkTimeTracker extends Activity {
 
     private static final String TAG = WorkTimeTracker.class.getSimpleName();
+
+    private static final String START_HOUR = "START_HOUR";
+    private static final String START_MINS = "START_MINS";
+    private static final String STOP_HOUR = "STOP_HOUR";
+    private static final String STOP_MINS = "STOP_MINS";
 
     private final OnTimeChangedListener onTimeChangedListener = new OnTimeChangedListener() {
 
@@ -44,6 +50,32 @@ public class WorkTimeTracker extends Activity {
         initLogButton();
     }
 
+    private void initTimePickers() {
+        DateTime currentTime = new DateTime();
+        int currentHourOfDay = currentTime.getHourOfDay();
+        int currentMinuteOfHour = currentTime.getMinuteOfHour();
+        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+        int startHour = preferences.getInt(START_HOUR, currentHourOfDay);
+        int startMins = preferences.getInt(START_MINS, currentMinuteOfHour);
+        int stopHour = preferences.getInt(STOP_HOUR, currentHourOfDay);
+        int stopMins = preferences.getInt(STOP_MINS, currentMinuteOfHour);
+        boolean is24h = is24h();
+        initTimePicker((TimePicker) findViewById(R.id.startTimePicker), is24h,startHour,startMins);
+        initTimePicker((TimePicker) findViewById(R.id.stopTimePicker), is24h, stopHour, stopMins);
+    }
+
+    private boolean is24h() {
+        String timeS = Settings.System.getString(getContentResolver(),
+                Settings.System.TIME_12_24);
+        return timeS == null || timeS.equals("24");
+    }
+
+    private void initTimePicker(TimePicker timePicker, boolean is24h, int hour, int mins) {
+        timePicker.setIs24HourView(is24h);
+        timePicker.setOnTimeChangedListener(onTimeChangedListener);
+        timePicker.setCurrentHour(hour);
+        timePicker.setCurrentMinute(mins);
+    }
     private void initOverHoursText() {
         MinutesHolder overHoursHolder = ((WorkTimeTrackerApp) getApplication()).getOverHoursHolder();
         overHoursHolder.addObserver(new Observer() {
@@ -58,37 +90,6 @@ public class WorkTimeTracker extends Activity {
     private void updateOverHoursText(Minutes overHours) {
         TextView diffText = (TextView) findViewById(R.id.overHours);
         diffText.setText("Over hours: " + DateUtils.minutesToText(overHours));
-    }
-
-    private void initLogButton() {
-        Button logButton = (Button) findViewById(R.id.log);
-        logButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                WorkTimeTrackerApp app = ((WorkTimeTrackerApp) getApplication());
-                Minutes diff = app.getDiffHolder().getMinutes();
-                Minutes todayOverHours = diff.minus(app.getNormalWorkHours());
-                Minutes totalOverHours = app.getOverHoursHolder().getMinutes();
-                Minutes newOverHours = totalOverHours.plus(todayOverHours);
-                app.getOverHoursHolder().setMinutes(newOverHours);
-            }
-        });
-    }
-
-    private void initNowButtons() {
-        initNowButton((Button) findViewById(R.id.startNow), (TimePicker) findViewById(R.id.startTimePicker));
-        initNowButton((Button) findViewById(R.id.stopNow), (TimePicker) findViewById(R.id.stopTimePicker));
-    }
-
-    private void initNowButton(Button button, final TimePicker timePicker) {
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DateTime now = new DateTime();
-                timePicker.setCurrentHour(now.getHourOfDay());
-                timePicker.setCurrentMinute(now.getMinuteOfHour());
-            }
-        });
     }
 
     private void initDiffText() {
@@ -107,28 +108,61 @@ public class WorkTimeTracker extends Activity {
         diffText.setText("Diff: " + DateUtils.minutesToText(diff));
     }
 
+    private void initNowButtons() {
+        initNowButton((Button) findViewById(R.id.startNow), (TimePicker) findViewById(R.id.startTimePicker));
+        initNowButton((Button) findViewById(R.id.stopNow), (TimePicker) findViewById(R.id.stopTimePicker));
+    }
+
+
+    private void initNowButton(Button button, final TimePicker timePicker) {
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DateTime now = new DateTime();
+                timePicker.setCurrentHour(now.getHourOfDay());
+                timePicker.setCurrentMinute(now.getMinuteOfHour());
+            }
+        });
+    }
+    private void initLogButton() {
+        Button logButton = (Button) findViewById(R.id.log);
+        logButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                WorkTimeTrackerApp app = ((WorkTimeTrackerApp) getApplication());
+                Minutes diff = app.getDiffHolder().getMinutes();
+                Minutes todayOverHours = diff.minus(app.getNormalWorkHours());
+                Minutes totalOverHours = app.getOverHoursHolder().getMinutes();
+                Minutes newOverHours = totalOverHours.plus(todayOverHours);
+                app.getOverHoursHolder().setMinutes(newOverHours);
+            }
+        });
+    }
+
+
+
+
+
     @Override
     protected void onStop() {
         super.onStop();
         ((WorkTimeTrackerApp) getApplication()).saveOverHours();
+        saveTimePickerValues();
     }
 
-    private void initTimePickers() {
-        boolean is24h = is24h();
-        initTimePicker((TimePicker) findViewById(R.id.startTimePicker), is24h);
-        initTimePicker((TimePicker) findViewById(R.id.stopTimePicker), is24h);
+    private void saveTimePickerValues() {
+        SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
+        TimePicker startTimePicker = (TimePicker) findViewById(R.id.startTimePicker);
+        editor.putInt(START_HOUR,startTimePicker.getCurrentHour());
+        editor.putInt(START_MINS,startTimePicker.getCurrentMinute());
+        TimePicker stopTimePicker = (TimePicker) findViewById(R.id.stopTimePicker);
+        editor.putInt(STOP_HOUR,stopTimePicker.getCurrentHour());
+        editor.putInt(STOP_MINS,stopTimePicker.getCurrentMinute());
+        editor.commit();
     }
 
-    private void initTimePicker(TimePicker timePicker, boolean is24h) {
-        timePicker.setIs24HourView(is24h);
-        timePicker.setOnTimeChangedListener(onTimeChangedListener);
-    }
 
-    private boolean is24h() {
-        String timeS = Settings.System.getString(getContentResolver(),
-                Settings.System.TIME_12_24);
-        return timeS == null || timeS.equals("24");
-    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
