@@ -1,6 +1,7 @@
 package pl.rafalmag.worktimetracker;
 
 import android.app.Application;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import org.joda.time.Minutes;
@@ -12,10 +13,8 @@ import org.joda.time.Minutes;
  */
 public class WorkTimeTrackerApp extends Application {
 
-
-    private static final String PREFERENCES_FILE_NAME = "pl.rafalmag.worktimetracker";
+    private static final String TAG = WorkTimeTrackerApp.class.getCanonicalName();
     private static final String TOTAL_OVER_HOURS_AS_MINUTES = "minutes";
-    private static final String TAG = WorkTimeTrackerApp.class.getSimpleName();
 
     private final MinutesHolder overHoursHolder = new MinutesHolder();
 
@@ -40,7 +39,7 @@ public class WorkTimeTrackerApp extends Application {
     }
 
     private void loadOverHours() {
-        int mins = getSharedPreferences(PREFERENCES_FILE_NAME, MODE_PRIVATE).getInt(TOTAL_OVER_HOURS_AS_MINUTES, 0);
+        int mins = PreferenceManager.getDefaultSharedPreferences(this).getInt(TOTAL_OVER_HOURS_AS_MINUTES, 0);
         Minutes minutes = Minutes.minutes(mins);
         overHoursHolder.setMinutes(minutes);
         Log.i(TAG, "Loaded total over hours (" + mins + " mins)");
@@ -48,7 +47,7 @@ public class WorkTimeTrackerApp extends Application {
 
     public void saveOverHours() {
         int mins = overHoursHolder.getMinutes().getMinutes();
-        boolean success = getSharedPreferences(PREFERENCES_FILE_NAME, MODE_PRIVATE)
+        boolean success = PreferenceManager.getDefaultSharedPreferences(this)
                 .edit()
                 .putInt(TOTAL_OVER_HOURS_AS_MINUTES, mins)
                 .commit();
@@ -68,6 +67,7 @@ public class WorkTimeTrackerApp extends Application {
     }
 
     public Minutes getNormalWorkHours() {
-        return Minutes.minutes(8 * 60); //TODO property
+        int mins = PreferenceManager.getDefaultSharedPreferences(this).getInt("work_time",8*60);
+        return Minutes.minutes(mins);
     }
 }

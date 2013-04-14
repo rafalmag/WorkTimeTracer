@@ -1,6 +1,7 @@
 package pl.rafalmag.worktimetracker;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -20,7 +21,7 @@ import org.joda.time.Minutes;
 
 public class WorkTimeTracker extends Activity {
 
-    private static final String TAG = WorkTimeTracker.class.getSimpleName();
+    private static final String TAG = WorkTimeTracker.class.getCanonicalName();
 
     private static final String START_HOUR = "START_HOUR";
     private static final String START_MINS = "START_MINS";
@@ -47,8 +48,6 @@ public class WorkTimeTracker extends Activity {
         initTimePickers();
         initOverHoursText();
         initDiffText();
-//        initNowButtons();
-//        initLogButton();
     }
 
     private void initTimePickers() {
@@ -110,22 +109,6 @@ public class WorkTimeTracker extends Activity {
         diffText.setText("Diff: " + DateUtils.minutesToText(diff));
     }
 
-//    private void initNowButtons() {
-//        initNowButton((Button) findViewById(R.id.startNow), (TimePicker) findViewById(R.id.startTimePicker));
-//        initNowButton((Button) findViewById(R.id.stopNow), (TimePicker) findViewById(R.id.stopTimePicker));
-//    }
-//
-//    private void initNowButton(Button button, final TimePicker timePicker) {
-//        button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                DateTime now = new DateTime();
-//                timePicker.setCurrentHour(now.getHourOfDay());
-//                timePicker.setCurrentMinute(now.getMinuteOfHour());
-//            }
-//        });
-//    }
-
     public void now(View view) {
         TimePicker timePicker = getTimePickerForNowButton(view);
         DateTime now = new DateTime();
@@ -145,18 +128,12 @@ public class WorkTimeTracker extends Activity {
     }
 
     public void log(View view) {
-//        Button logButton = (Button) findViewById(R.id.log);
-//        logButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
         WorkTimeTrackerApp app = ((WorkTimeTrackerApp) getApplication());
         Minutes diff = app.getDiffHolder().getMinutes();
         Minutes todayOverHours = diff.minus(app.getNormalWorkHours());
         Minutes totalOverHours = app.getOverHoursHolder().getMinutes();
         Minutes newOverHours = totalOverHours.plus(todayOverHours);
         app.getOverHoursHolder().setMinutes(newOverHours);
-//            }
-//        });
     }
 
     @Override
@@ -177,7 +154,6 @@ public class WorkTimeTracker extends Activity {
         editor.commit();
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -189,7 +165,8 @@ public class WorkTimeTracker extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
-                Log.d(TAG, "Menu action settings clicked");
+                Log.d(TAG, "Menu action settings selected");
+                startActivity(new Intent(this, PreferencesActivity.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
