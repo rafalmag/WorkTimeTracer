@@ -8,4 +8,10 @@
             android:title="Work time"
             android:summary="Set your average day work time"/>
 
+    <pl.rafalmag.worktimetracker.OverTimePreference
+        android:key="total_over_hours_as_mins"
+        android:defaultValue="0"
+        android:title="Over hours"
+        android:summary="Set your overtime / undertime"/>
+
 </PreferenceScreen>

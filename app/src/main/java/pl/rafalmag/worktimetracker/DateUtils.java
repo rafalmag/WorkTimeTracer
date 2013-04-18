@@ -28,13 +28,11 @@ public class DateUtils {
 
     public static String minutesToText(Minutes minutes) {
         int totalMinutes = minutes.getMinutes();
-        int days = totalMinutes / 60 / 24;
-        int hours = totalMinutes / 60 - days * 24;
-        int mins = totalMinutes % 60;
-//        long days = duration.getStandardDays();
-//        long hours = duration.getStandardHours() - days * 24;
-//        long minutes = duration.getStandardMinutes() - hours * 60;
+        int days = Math.abs(totalMinutes) / 60 / 24;
+        int hours = Math.abs(totalMinutes) / 60 - days * 24;
+        int mins = Math.abs(totalMinutes) % 60;
         StringBuilder sb = new StringBuilder();
+        sb.append(totalMinutes < 0 ? "-" : "");
         sb.append(days == 0 ? "" : days + " day ");
         sb.append(hours == 0 ? "" : hours + " h ");
         sb.append(mins == 0 ? "" : mins + " min ");

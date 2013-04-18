@@ -13,7 +13,6 @@ import org.junit.Test;
  */
 public class DateUtilsTest {
 
-
     @Test
     public void should_convert_minutes() {
         //given
@@ -42,6 +41,26 @@ public class DateUtilsTest {
         String text = DateUtils.minutesToText(minutes);
         //then
         assertThat(text, equalTo("1 day"));
+    }
+
+    @Test
+    public void should_convert_negative_minutes() {
+        //given
+        Minutes minutes = Minutes.minutes(-15);
+        //when
+        String text = DateUtils.minutesToText(minutes);
+        //then
+        assertThat(text, equalTo("-15 min"));
+    }
+
+    @Test
+    public void should_convert_negative_hour_and_minutes() {
+        //given
+        Minutes minutes = Minutes.minutes(-99);
+        //when
+        String text = DateUtils.minutesToText(minutes);
+        //then
+        assertThat(text, equalTo("-1 h 39 min"));
     }
 
     @Test

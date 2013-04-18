@@ -1,6 +1,7 @@
 package pl.rafalmag.worktimetracker;
 
 import android.app.Application;
+import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -14,9 +15,8 @@ import org.joda.time.Minutes;
 public class WorkTimeTrackerApp extends Application {
 
     private static final String TAG = WorkTimeTrackerApp.class.getCanonicalName();
-    private static final String TOTAL_OVER_HOURS_AS_MINUTES = "minutes";
-
-    private final MinutesHolder overHoursHolder = new MinutesHolder();
+    public static final String TOTAL_OVER_HOURS_AS_MINUTES = "total_over_hours_as_mins";
+    private static final String WORK_TIME = "work_time";
 
     private final MinutesHolder diffHolder = new MinutesHolder();
 
@@ -24,7 +24,6 @@ public class WorkTimeTrackerApp extends Application {
     public void onCreate() {
         super.onCreate();
         initExceptionHandler();
-        loadOverHours();
     }
 
     private void initExceptionHandler() {
@@ -38,15 +37,17 @@ public class WorkTimeTrackerApp extends Application {
         });
     }
 
-    private void loadOverHours() {
-        int mins = PreferenceManager.getDefaultSharedPreferences(this).getInt(TOTAL_OVER_HOURS_AS_MINUTES, 0);
-        Minutes minutes = Minutes.minutes(mins);
-        overHoursHolder.setMinutes(minutes);
-        Log.i(TAG, "Loaded total over hours (" + mins + " mins)");
+    public MinutesHolder getDiffHolder() {
+        return diffHolder;
     }
 
-    public void saveOverHours() {
-        int mins = overHoursHolder.getMinutes().getMinutes();
+    public Minutes getNormalWorkHours() {
+        int mins = PreferenceManager.getDefaultSharedPreferences(this).getInt(WORK_TIME, 8 * 60);
+        return Minutes.minutes(mins);
+    }
+
+    public void saveOverHours(Minutes newOverHours) {
+        int mins = newOverHours.getMinutes();
         boolean success = PreferenceManager.getDefaultSharedPreferences(this)
                 .edit()
                 .putInt(TOTAL_OVER_HOURS_AS_MINUTES, mins)
@@ -57,17 +58,9 @@ public class WorkTimeTrackerApp extends Application {
             Log.e(TAG, "Could not save total over hours (" + mins + " mins)... :(");
         }
     }
-
-    public MinutesHolder getOverHoursHolder() {
-        return overHoursHolder;
-    }
-
-    public MinutesHolder getDiffHolder() {
-        return diffHolder;
-    }
-
-    public Minutes getNormalWorkHours() {
-        int mins = PreferenceManager.getDefaultSharedPreferences(this).getInt("work_time", 8 * 60);
+    public Minutes getOverHours() {
+        int mins = PreferenceManager.getDefaultSharedPreferences(this).getInt(TOTAL_OVER_HOURS_AS_MINUTES, 0);
         return Minutes.minutes(mins);
     }
 }
+

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
@@ -77,15 +78,23 @@ public class WorkTimeTracker extends Activity {
         timePicker.setCurrentMinute(mins);
     }
 
-    private void initOverHoursText() {
-        MinutesHolder overHoursHolder = ((WorkTimeTrackerApp) getApplication()).getOverHoursHolder();
-        overHoursHolder.addObserver(new Observer() {
-            @Override
-            public void update(Observable observable, Object data) {
-                updateOverHoursText((Minutes) data);
+    // to keep it from GC
+    // http://stackoverflow.com/questions/2542938/sharedpreferences-onsharedpreferencechangelistener-not-being-called-consistently
+    private final SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            if(key.equals(WorkTimeTrackerApp.TOTAL_OVER_HOURS_AS_MINUTES)){
+                Log.d(TAG, key + " changed");
+                Minutes minutes = Minutes.minutes(sharedPreferences.getInt(key, 0));
+                updateOverHoursText(minutes);
             }
-        });
-        updateOverHoursText(overHoursHolder.getMinutes());
+        }
+    };
+
+    private void initOverHoursText() {
+        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(preferenceChangeListener);
+        updateOverHoursText(((WorkTimeTrackerApp) getApplication()).getOverHours());
     }
 
     private void updateOverHoursText(Minutes overHours) {
@@ -131,15 +140,14 @@ public class WorkTimeTracker extends Activity {
         WorkTimeTrackerApp app = ((WorkTimeTrackerApp) getApplication());
         Minutes diff = app.getDiffHolder().getMinutes();
         Minutes todayOverHours = diff.minus(app.getNormalWorkHours());
-        Minutes totalOverHours = app.getOverHoursHolder().getMinutes();
+        Minutes totalOverHours = app.getOverHours();
         Minutes newOverHours = totalOverHours.plus(todayOverHours);
-        app.getOverHoursHolder().setMinutes(newOverHours);
+        app.saveOverHours(newOverHours);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        ((WorkTimeTrackerApp) getApplication()).saveOverHours();
         saveTimePickerValues();
     }
 
