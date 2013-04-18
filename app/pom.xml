@@ -9,7 +9,6 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>pl.rafalmag</groupId>
     <artifactId>worktimetracker</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>apk</packaging>
@@ -20,10 +19,20 @@
             <groupId>com.google.android</groupId>
             <artifactId>android</artifactId>
         </dependency>
+        <!--
+        <dependency>
+            <groupId>net.simonvt</groupId>
+            <artifactId>android-numberpicker</artifactId>
+            <version>1.0.0</version>
+            <type>apklib</type>
+        </dependency>
+        -->
+        <!--
         <dependency>
             <groupId>de.akquinet.android.androlog</groupId>
             <artifactId>androlog</artifactId>
         </dependency>
+        -->
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
