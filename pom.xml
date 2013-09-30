@@ -17,6 +17,13 @@
         <platform.version>4.1.1.4
         </platform.version>
     </properties>
+	
+	<scm>
+        <connection>scm:git:git@github.com:rafalmag/WorkTimeTracer.git</connection>
+        <developerConnection>scm:git:git@github.com:rafalmag/WorkTimeTracer.git</developerConnection>
+        <url>scm:git:git@github.com:rafalmag/WorkTimeTracer.git</url>
+		<tag>HEAD</tag>
+    </scm>
 
     <dependencyManagement>
         <dependencies>
@@ -53,6 +60,18 @@
     </dependencyManagement>
 
     <build>
-
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                    <artifactId>android-maven-plugin</artifactId>
+                    <version>3.5.3</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>2.5.1</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 </project>
