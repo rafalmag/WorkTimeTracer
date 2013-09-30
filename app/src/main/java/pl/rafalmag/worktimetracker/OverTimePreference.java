@@ -135,18 +135,10 @@ public class OverTimePreference extends DialogPreference {
         // changed the value via the IME and there is a next input the IME will
         // be shown, otherwise the user chose another means of changing the
         // value and having the IME up makes no sense.
-//        InputMethodManager inputMethodManager = InputMethodManager.peekInstance();
         if (inputMethodManager != null) {
-            Log.d(TAG, "IMM not null");
-//            if (inputMethodManager.isActive(hourPicker)) {
-//                Log.d(TAG,"hourPicker.clearFocus");
             hourPicker.clearFocus();
-//                inputMethodManager.hideSoftInputFromWindow(windowToken, InputMethodManager.HIDE_NOT_ALWAYS);
-//            } else if (inputMethodManager.isActive(minutePicker)) {
-//                Log.d(TAG,"minutePicker.clearFocus");
             minutePicker.clearFocus();
             inputMethodManager.hideSoftInputFromWindow(windowToken, InputMethodManager.HIDE_NOT_ALWAYS);
-//            }
         }
     }
 

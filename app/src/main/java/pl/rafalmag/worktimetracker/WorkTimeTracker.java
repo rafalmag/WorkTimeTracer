@@ -1,15 +1,18 @@
 package pl.rafalmag.worktimetracker;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.TimePicker.OnTimeChangedListener;
@@ -49,6 +52,8 @@ public class WorkTimeTracker extends Activity {
         initTimePickers();
         initOverHoursText();
         initDiffText();
+        Button logButton = (Button) findViewById(R.id.log);
+        logButton.setHapticFeedbackEnabled(true);
     }
 
     private void initTimePickers() {
@@ -79,12 +84,14 @@ public class WorkTimeTracker extends Activity {
     }
 
     // to keep it from GC
-    // http://stackoverflow.com/questions/2542938/sharedpreferences-onsharedpreferencechangelistener-not-being-called-consistently
-    private final SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+    // http://stackoverflow.com/questions/2542938/sharedpreferences-onsharedpreferencechangelistener-not-being-called
+    // -consistently
+    private final SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener = new SharedPreferences
+            .OnSharedPreferenceChangeListener() {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            if(key.equals(WorkTimeTrackerApp.TOTAL_OVER_HOURS_AS_MINUTES)){
+            if (key.equals(WorkTimeTrackerApp.TOTAL_OVER_HOURS_AS_MINUTES)) {
                 Log.d(TAG, key + " changed");
                 Minutes minutes = Minutes.minutes(sharedPreferences.getInt(key, 0));
                 updateOverHoursText(minutes);
@@ -93,7 +100,8 @@ public class WorkTimeTracker extends Activity {
     };
 
     private void initOverHoursText() {
-        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(preferenceChangeListener);
+        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener
+                (preferenceChangeListener);
         updateOverHoursText(((WorkTimeTrackerApp) getApplication()).getOverHours());
     }
 
@@ -143,6 +151,8 @@ public class WorkTimeTracker extends Activity {
         Minutes totalOverHours = app.getOverHours();
         Minutes newOverHours = totalOverHours.plus(todayOverHours);
         app.saveOverHours(newOverHours);
+        Vibrator vibe = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE) ;
+        vibe.vibrate(50); // 50 is time in ms
     }
 
     @Override
