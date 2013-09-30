@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>pl.rafalmag</groupId>
         <artifactId>worktimetracker-parent</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0</version>
     </parent>
 
     <artifactId>worktimetracker-it</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <packaging>apk</packaging>
     <name>worktimetracker-it - Integration tests</name>
 
@@ -24,14 +23,14 @@
             <groupId>pl.rafalmag</groupId>
             <artifactId>worktimetracker</artifactId>
             <type>apk</type>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>pl.rafalmag</groupId>
             <artifactId>worktimetracker</artifactId>
             <type>jar</type>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
