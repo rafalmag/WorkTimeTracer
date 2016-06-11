@@ -1,11 +1,13 @@
 package pl.rafalmag.worktimetracker;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import org.junit.Test;
 
 import java.util.Calendar;
 
-import org.junit.Test;
+import pl.rafalmag.worktimetracker.Time;
+
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 public class TimeTest {
 

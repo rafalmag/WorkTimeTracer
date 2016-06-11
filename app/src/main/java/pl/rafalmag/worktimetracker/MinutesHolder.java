@@ -1,14 +1,9 @@
 package pl.rafalmag.worktimetracker;
 
-import java.util.Observable;
-
 import org.joda.time.Minutes;
 
-/**
- * User: rafalmag
- * Date: 12.04.13
- * Time: 20:45
- */
+import java.util.Observable;
+
 public class MinutesHolder extends Observable {
 
     private Minutes minutes = Minutes.minutes(0);

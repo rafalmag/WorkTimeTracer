@@ -1,10 +1,10 @@
 package pl.rafalmag.worktimetracker;
 
-import java.util.Calendar;
-
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.joda.time.Minutes;
+
+import java.util.Calendar;
 
 /**
  * User: rafalmag

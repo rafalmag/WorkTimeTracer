@@ -1,16 +1,12 @@
 package pl.rafalmag.worktimetracker;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-
 import org.joda.time.Minutes;
 import org.junit.Test;
 
-/**
- * User: rafalmag
- * Date: 11.04.13
- * Time: 23:09
- */
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
+
 public class DateUtilsTest {
 
     @Test

@@ -1,186 +1,56 @@
 package pl.rafalmag.worktimetracker;
 
-import android.app.Activity;
-import android.content.Context;
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Vibrator;
-import android.preference.PreferenceManager;
-import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.TimePicker;
-import android.widget.TimePicker.OnTimeChangedListener;
+import android.widget.Toast;
 
-import java.util.Observable;
-import java.util.Observer;
+import butterknife.ButterKnife;
 
-import org.joda.time.DateTime;
-import org.joda.time.Minutes;
-
-public class WorkTimeTracker extends Activity {
+public class WorkTimeTracker extends AppCompatActivity {
 
     private static final String TAG = WorkTimeTracker.class.getCanonicalName();
-
-    private static final String START_HOUR = "START_HOUR";
-    private static final String START_MINS = "START_MINS";
-    private static final String STOP_HOUR = "STOP_HOUR";
-    private static final String STOP_MINS = "STOP_MINS";
-
-    private final OnTimeChangedListener onTimeChangedListener = new OnTimeChangedListener() {
-
-        @Override
-        public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
-            TimePicker startTimePicker = (TimePicker) findViewById(R.id.startTimePicker);
-            Time startTime = new Time(startTimePicker.getCurrentHour(), startTimePicker.getCurrentMinute());
-            TimePicker stopTimePicker = (TimePicker) findViewById(R.id.stopTimePicker);
-            Time stopTime = new Time(stopTimePicker.getCurrentHour(), stopTimePicker.getCurrentMinute());
-            Minutes diff = DateUtils.diff(startTime, stopTime);
-            ((WorkTimeTrackerApp) getApplication()).getDiffHolder().setMinutes(diff);
-        }
-    };
+    private static final int PERMISSION_VIBRATE_REQUEST = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_work_time_tracker);
-        initTimePickers();
-        initOverHoursText();
-        initDiffText();
-        Button logButton = (Button) findViewById(R.id.log);
-        logButton.setHapticFeedbackEnabled(true);
-    }
-
-    private void initTimePickers() {
-        DateTime currentTime = new DateTime();
-        int currentHourOfDay = currentTime.getHourOfDay();
-        int currentMinuteOfHour = currentTime.getMinuteOfHour();
-        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
-        int startHour = preferences.getInt(START_HOUR, currentHourOfDay);
-        int startMins = preferences.getInt(START_MINS, currentMinuteOfHour);
-        int stopHour = preferences.getInt(STOP_HOUR, currentHourOfDay);
-        int stopMins = preferences.getInt(STOP_MINS, currentMinuteOfHour);
-        boolean is24h = is24h();
-        initTimePicker((TimePicker) findViewById(R.id.startTimePicker), is24h, startHour, startMins);
-        initTimePicker((TimePicker) findViewById(R.id.stopTimePicker), is24h, stopHour, stopMins);
-    }
-
-    private boolean is24h() {
-        String timeS = Settings.System.getString(getContentResolver(),
-                Settings.System.TIME_12_24);
-        return timeS == null || timeS.equals("24");
-    }
-
-    private void initTimePicker(TimePicker timePicker, boolean is24h, int hour, int mins) {
-        timePicker.setIs24HourView(is24h);
-        timePicker.setOnTimeChangedListener(onTimeChangedListener);
-        timePicker.setCurrentHour(hour);
-        timePicker.setCurrentMinute(mins);
-    }
-
-    // to keep it from GC
-    // http://stackoverflow.com/questions/2542938/sharedpreferences-onsharedpreferencechangelistener-not-being-called
-    // -consistently
-    private final SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener = new SharedPreferences
-            .OnSharedPreferenceChangeListener() {
-
-        @Override
-        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            if (key.equals(WorkTimeTrackerApp.TOTAL_OVER_HOURS_AS_MINUTES)) {
-                Log.d(TAG, key + " changed");
-                Minutes minutes = Minutes.minutes(sharedPreferences.getInt(key, 0));
-                updateOverHoursText(minutes);
-            }
+        ButterKnife.bind(this);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        // In an actual app, you'd want to request a permission when the user performs an action
+        // that requires that permission.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            getPermissionToVibrate();
         }
-    };
-
-    private void initOverHoursText() {
-        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener
-                (preferenceChangeListener);
-        updateOverHoursText(((WorkTimeTrackerApp) getApplication()).getOverHours());
-    }
-
-    private void updateOverHoursText(Minutes overHours) {
-        TextView diffText = (TextView) findViewById(R.id.overHours);
-        diffText.setText("Over hours: " + DateUtils.minutesToText(overHours));
-    }
-
-    private void initDiffText() {
-        MinutesHolder diffHolder = ((WorkTimeTrackerApp) getApplication()).getDiffHolder();
-        diffHolder.addObserver(new Observer() {
-            @Override
-            public void update(Observable observable, Object data) {
-                updateDiffText((Minutes) data);
-            }
-        });
-        updateDiffText(diffHolder.getMinutes());
-    }
-
-    private void updateDiffText(Minutes diff) {
-        TextView diffText = (TextView) findViewById(R.id.diff_time);
-        diffText.setText("Diff: " + DateUtils.minutesToText(diff));
-    }
-
-    public void now(View view) {
-        TimePicker timePicker = getTimePickerForNowButton(view);
-        DateTime now = new DateTime();
-        timePicker.setCurrentHour(now.getHourOfDay());
-        timePicker.setCurrentMinute(now.getMinuteOfHour());
-    }
-
-    private TimePicker getTimePickerForNowButton(View view) {
-        switch (view.getId()) {
-            case R.id.startNow:
-                return (TimePicker) findViewById(R.id.startTimePicker);
-            case R.id.stopNow:
-                return (TimePicker) findViewById(R.id.stopTimePicker);
-            default:
-                throw new IllegalStateException(view + " is neither start nor stop button.");
-        }
-    }
-
-    public void log(View view) {
-        WorkTimeTrackerApp app = ((WorkTimeTrackerApp) getApplication());
-        Minutes diff = app.getDiffHolder().getMinutes();
-        Minutes todayOverHours = diff.minus(app.getNormalWorkHours());
-        Minutes totalOverHours = app.getOverHours();
-        Minutes newOverHours = totalOverHours.plus(todayOverHours);
-        app.saveOverHours(newOverHours);
-        Vibrator vibe = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE) ;
-        vibe.vibrate(50); // 50 is time in ms
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        saveTimePickerValues();
-    }
-
-    private void saveTimePickerValues() {
-        SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
-        TimePicker startTimePicker = (TimePicker) findViewById(R.id.startTimePicker);
-        editor.putInt(START_HOUR, startTimePicker.getCurrentHour());
-        editor.putInt(START_MINS, startTimePicker.getCurrentMinute());
-        TimePicker stopTimePicker = (TimePicker) findViewById(R.id.stopTimePicker);
-        editor.putInt(STOP_HOUR, stopTimePicker.getCurrentHour());
-        editor.putInt(STOP_MINS, stopTimePicker.getCurrentMinute());
-        editor.commit();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.work_time_tracker, menu);
+        getMenuInflater().inflate(R.menu.menu_work_time_tracker, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case R.id.action_settings:
                 Log.d(TAG, "Menu action settings selected");
@@ -191,4 +61,41 @@ public class WorkTimeTracker extends Activity {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.M)
+    public void getPermissionToVibrate() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.VIBRATE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // The permission is NOT already granted.
+            // Check if the user has been asked about this permission already and denied
+            // it. If so, we want to give more explanation about why the permission is needed.
+            if (shouldShowRequestPermissionRationale(Manifest.permission.VIBRATE)) {
+                // TODO Show our own UI to explain to the user why we need to vibrate
+                // before actually requesting the permission and showing the default UI
+            }
+
+            // Fire off an async request to actually get the permission
+            // This will show the standard permission request dialog UI
+            requestPermissions(new String[]{Manifest.permission.VIBRATE},
+                    PERMISSION_VIBRATE_REQUEST);
+        }
+    }
+
+    // Callback with the request from calling requestPermissions(...)
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String permissions[],
+                                           @NonNull int[] grantResults) {
+        // Make sure it's our original VIBRATE request
+        if (requestCode == PERMISSION_VIBRATE_REQUEST) {
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Vibrate permission granted", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Vibrate permission denied", Toast.LENGTH_SHORT).show();
+                //TODO will exit?
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
 }

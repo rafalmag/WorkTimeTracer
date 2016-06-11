@@ -1,17 +1,11 @@
 package pl.rafalmag.worktimetracker;
 
 import android.app.Application;
-import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
 import org.joda.time.Minutes;
 
-/**
- * User: rafalmag
- * Date: 12.04.13
- * Time: 20:40
- */
 public class WorkTimeTrackerApp extends Application {
 
     private static final String TAG = WorkTimeTrackerApp.class.getCanonicalName();

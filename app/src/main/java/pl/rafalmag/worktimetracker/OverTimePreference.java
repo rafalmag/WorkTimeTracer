@@ -10,18 +10,14 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import net.simonvt.numberpicker.NumberPicker;
 
 /**
- * User: rafalmag
- * Date: 14.04.13
- * Time: 19:58
- * <p/>
- * inspired by https://github.com/commonsguy/cw-lunchlist/blob/master/19-Alarm/LunchList/src/apt/tutorial
+ * Inspired by https://github.com/commonsguy/cw-lunchlist/blob/master/19-Alarm/LunchList/src/apt/tutorial
  * /TimePreference.java
  */
 
