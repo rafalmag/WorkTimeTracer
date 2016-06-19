@@ -1,4 +1,4 @@
-package pl.rafalmag.worktimetracker;
+package pl.rafalmag.worktimetracker.settings;
 
 import android.content.Context;
 import android.content.res.TypedArray;

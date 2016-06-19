@@ -12,7 +12,7 @@
         android:orientation="horizontal">
 
         <!-- max value infinite -->
-        <pl.rafalmag.worktimetracker.MinMaxNumberPicker
+        <pl.rafalmag.worktimetracker.settings.MinMaxNumberPicker
             android:id="@+id/hourPicker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -29,7 +29,7 @@
             android:text=":"
             android:textAlignment="center" />
 
-        <pl.rafalmag.worktimetracker.MinMaxNumberPicker
+        <pl.rafalmag.worktimetracker.settings.MinMaxNumberPicker
             android:id="@+id/minutePicker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

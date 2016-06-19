@@ -1,8 +1,10 @@
-package pl.rafalmag.worktimetracker;
+package pl.rafalmag.worktimetracker.settings;
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
+
+import pl.rafalmag.worktimetracker.R;
 
 public class SettingsFragment extends PreferenceFragment  {
 

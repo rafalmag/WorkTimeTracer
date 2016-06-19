@@ -1,4 +1,4 @@
-package pl.rafalmag.worktimetracker;
+package pl.rafalmag.worktimetracker.settings;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -15,6 +15,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import pl.rafalmag.worktimetracker.R;
 
 
 /**
