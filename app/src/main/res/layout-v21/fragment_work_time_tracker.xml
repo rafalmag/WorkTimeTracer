@@ -28,7 +28,8 @@
         <pl.rafalmag.worktimetracker.NonScrollableTimePicker
             android:id="@+id/startTimePicker"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:timePickerMode="spinner" />
 
         <Button
             android:id="@+id/startNow"
@@ -47,7 +48,8 @@
         <pl.rafalmag.worktimetracker.NonScrollableTimePicker
             android:id="@+id/stopTimePicker"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:timePickerMode="spinner" />
 
         <Button
             android:id="@+id/stopNow"

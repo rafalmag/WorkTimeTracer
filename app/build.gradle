@@ -7,7 +7,10 @@ android {
 
     defaultConfig {
         applicationId "pl.rafalmag.worktimetracker"
+        // 17 = 4.2, jelly bean
+        // 18 = 4.3, jelly bean, S3
         minSdkVersion 17
+        // 23 = M
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"

@@ -5,8 +5,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
 import android.support.v4.app.Fragment;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,13 +39,11 @@ public class WorkTimeTrackerFragment extends Fragment {
     private static final String STOP_HOUR = "STOP_HOUR";
     private static final String STOP_MINS = "STOP_MINS";
 
-    private Unbinder unbinder;
-
     @BindView(R.id.startTimePicker)
-    TimePicker startTimePicker;
+    NonScrollableTimePicker startTimePicker;
 
     @BindView(R.id.stopTimePicker)
-    TimePicker stopTimePicker;
+    NonScrollableTimePicker stopTimePicker;
 
     @BindView(R.id.log)
     Button logButton;
@@ -65,13 +63,13 @@ public class WorkTimeTrackerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_work_time_tracker, container, false);
-        unbinder = ButterKnife.bind(this, view);
+        ButterKnife.bind(this, view);
         onTimeChangedListener = new OnTimeChangedListener() {
 
             @Override
             public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
-                Time startTime = new Time(startTimePicker.getCurrentHour(), startTimePicker.getCurrentMinute());
-                Time stopTime = new Time(stopTimePicker.getCurrentHour(), stopTimePicker.getCurrentMinute());
+                Time startTime = new Time(startTimePicker.getHour(), startTimePicker.getMinute());
+                Time stopTime = new Time(stopTimePicker.getHour(), stopTimePicker.getMinute());
                 Minutes diff = DateUtils.diff(startTime, stopTime);
                 ((WorkTimeTrackerApp) getActivity().getApplication()).getDiffHolder().setMinutes(diff);
             }
@@ -84,13 +82,6 @@ public class WorkTimeTrackerFragment extends Fragment {
         return view;
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
-    }
-
-
     private void initTimePickers() {
         DateTime currentTime = new DateTime();
         int currentHourOfDay = currentTime.getHourOfDay();
@@ -100,22 +91,16 @@ public class WorkTimeTrackerFragment extends Fragment {
         int startMins = preferences.getInt(START_MINS, currentMinuteOfHour);
         int stopHour = preferences.getInt(STOP_HOUR, currentHourOfDay);
         int stopMins = preferences.getInt(STOP_MINS, currentMinuteOfHour);
-        boolean is24h = is24h();
+        boolean is24h = DateFormat.is24HourFormat(getContext());
         initTimePicker(startTimePicker, is24h, startHour, startMins);
         initTimePicker(stopTimePicker, is24h, stopHour, stopMins);
     }
 
-    private boolean is24h() {
-        String timeS = Settings.System.getString(getActivity().getContentResolver(),
-                Settings.System.TIME_12_24);
-        return timeS == null || timeS.equals("24");
-    }
-
-    private void initTimePicker(TimePicker timePicker, boolean is24h, int hour, int mins) {
+    private void initTimePicker(NonScrollableTimePicker timePicker, boolean is24h, int hour, int mins) {
         timePicker.setIs24HourView(is24h);
         timePicker.setOnTimeChangedListener(onTimeChangedListener);
-        timePicker.setCurrentHour(hour);
-        timePicker.setCurrentMinute(mins);
+        timePicker.setHour(hour);
+        timePicker.setMinute(mins);
     }
 
     // to keep it from GC
@@ -160,30 +145,19 @@ public class WorkTimeTrackerFragment extends Fragment {
     }
 
     @OnClick(R.id.startNow)
-    public void startNow(View view){
+    public void startNow(View view) {
         now(startTimePicker);
     }
 
     @OnClick(R.id.stopNow)
-    public void stopNow(View view){
+    public void stopNow(View view) {
         now(stopTimePicker);
     }
 
-    public void now(TimePicker timePicker) {
+    public void now(NonScrollableTimePicker timePicker) {
         DateTime now = new DateTime();
-        timePicker.setCurrentHour(now.getHourOfDay());
-        timePicker.setCurrentMinute(now.getMinuteOfHour());
-    }
-
-    private TimePicker getTimePickerForNowButton(View view) {
-        switch (view.getId()) {
-            case R.id.startNow:
-                return startTimePicker;
-            case R.id.stopNow:
-                return stopTimePicker;
-            default:
-                throw new IllegalStateException(view + " is neither start nor stop button.");
-        }
+        timePicker.setHour(now.getHourOfDay());
+        timePicker.setMinute(now.getMinuteOfHour());
     }
 
     @OnClick(R.id.log)
@@ -207,10 +181,10 @@ public class WorkTimeTrackerFragment extends Fragment {
 
     private void saveTimePickerValues() {
         SharedPreferences.Editor editor = getActivity().getPreferences(Context.MODE_PRIVATE).edit();
-        editor.putInt(START_HOUR, startTimePicker.getCurrentHour());
-        editor.putInt(START_MINS, startTimePicker.getCurrentMinute());
-        editor.putInt(STOP_HOUR, stopTimePicker.getCurrentHour());
-        editor.putInt(STOP_MINS, stopTimePicker.getCurrentMinute());
+        editor.putInt(START_HOUR, startTimePicker.getHour());
+        editor.putInt(START_MINS, startTimePicker.getMinute());
+        editor.putInt(STOP_HOUR, stopTimePicker.getHour());
+        editor.putInt(STOP_MINS, stopTimePicker.getMinute());
         editor.apply();
     }
 }

@@ -31,13 +31,12 @@ public class DateUtils {
         int days = Math.abs(totalMinutes) / 60 / 24;
         int hours = Math.abs(totalMinutes) / 60 - days * 24;
         int mins = Math.abs(totalMinutes) % 60;
-        StringBuilder sb = new StringBuilder();
-        sb.append(totalMinutes < 0 ? "-" : "");
-        sb.append(days == 0 ? "" : days + " day ");
-        sb.append(hours == 0 ? "" : hours + " h ");
-        sb.append(mins == 0 ? "" : mins + " min ");
+        String sb = (totalMinutes < 0 ? "-" : "") +
+                (days == 0 ? "" : days + " day ") +
+                (hours == 0 ? "" : hours + " h ") +
+                (mins == 0 ? "" : mins + " min ");
 
-        String result = sb.toString().trim();
+        String result = sb.trim();
         return result.isEmpty() ? "0 min" : result;
     }
 
