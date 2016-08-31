@@ -86,7 +86,7 @@ public class WorkTimeTrackerFragment extends Fragment {
         DateTime currentTime = new DateTime();
         int currentHourOfDay = currentTime.getHourOfDay();
         int currentMinuteOfHour = currentTime.getMinuteOfHour();
-        SharedPreferences preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         int startHour = preferences.getInt(START_HOUR, currentHourOfDay);
         int startMins = preferences.getInt(START_MINS, currentMinuteOfHour);
         int stopHour = preferences.getInt(STOP_HOUR, currentHourOfDay);
@@ -180,7 +180,7 @@ public class WorkTimeTrackerFragment extends Fragment {
     }
 
     private void saveTimePickerValues() {
-        SharedPreferences.Editor editor = getActivity().getPreferences(Context.MODE_PRIVATE).edit();
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
         editor.putInt(START_HOUR, startTimePicker.getHour());
         editor.putInt(START_MINS, startTimePicker.getMinute());
         editor.putInt(STOP_HOUR, stopTimePicker.getHour());
