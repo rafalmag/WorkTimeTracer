@@ -10,7 +10,8 @@ public class WorkTimeTrackerApp extends Application {
 
     private static final String TAG = WorkTimeTrackerApp.class.getCanonicalName();
     public static final String TOTAL_OVER_HOURS_AS_MINUTES = "total_over_hours_as_mins";
-    private static final String WORK_TIME = "work_time";
+    public static final String WORK_TIME = "work_time";
+    public static final int DEFAULT_WORK_TIME_MINUTES = 8 * 60;
 
     private final MinutesHolder diffHolder = new MinutesHolder();
 
@@ -52,6 +53,7 @@ public class WorkTimeTrackerApp extends Application {
             Log.e(TAG, "Could not save total over hours (" + mins + " mins)... :(");
         }
     }
+
     public Minutes getOverHours() {
         int mins = PreferenceManager.getDefaultSharedPreferences(this).getInt(TOTAL_OVER_HOURS_AS_MINUTES, 0);
         return Minutes.minutes(mins);

@@ -25,7 +25,6 @@ import java.util.Observer;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.Unbinder;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -55,6 +54,8 @@ public class WorkTimeTrackerFragment extends Fragment {
     TextView diffText;
 
     private OnTimeChangedListener onTimeChangedListener;
+    // strong reference
+    private SharedPreferences.OnSharedPreferenceChangeListener workTimePreferenceChangeListenerForDiff;
 
     public WorkTimeTrackerFragment() {
     }
@@ -130,18 +131,34 @@ public class WorkTimeTrackerFragment extends Fragment {
     }
 
     private void initDiffText() {
-        MinutesHolder diffHolder = ((WorkTimeTrackerApp) getActivity().getApplication()).getDiffHolder();
+        final MinutesHolder diffHolder = ((WorkTimeTrackerApp) getActivity().getApplication()).getDiffHolder();
         diffHolder.addObserver(new Observer() {
             @Override
             public void update(Observable observable, Object data) {
                 updateDiffText((Minutes) data);
             }
         });
+
+        workTimePreferenceChangeListenerForDiff = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                if (key.equals(WorkTimeTrackerApp.WORK_TIME)) {
+                    updateDiffText(diffHolder.getMinutes());
+                }
+            }
+        };
+        PreferenceManager.getDefaultSharedPreferences(getActivity()).registerOnSharedPreferenceChangeListener(workTimePreferenceChangeListenerForDiff);
+
         updateDiffText(diffHolder.getMinutes());
     }
 
     private void updateDiffText(Minutes diff) {
-        diffText.setText("Diff: " + DateUtils.minutesToText(diff));
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        int workTimeMin = sharedPreferences.getInt(WorkTimeTrackerApp.WORK_TIME, WorkTimeTrackerApp.DEFAULT_WORK_TIME_MINUTES);
+        Minutes workTime = Minutes.minutes(workTimeMin);
+        Minutes workTimeDiff = diff.minus(workTime);
+        String verboseDiff = " (" + (workTimeDiff.isGreaterThan(Minutes.ZERO) ? "+" : "") + DateUtils.minutesToText(workTimeDiff) + ")";
+        diffText.setText("Diff: " + DateUtils.minutesToText(diff) + verboseDiff);
     }
 
     @OnClick(R.id.startNow)
