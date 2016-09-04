@@ -25,7 +25,7 @@ public class MainPagerAdapter extends FragmentGridPagerAdapter {
             case 2:
                 return TimePickerFragment.create(TimePickerFragment.Mode.STOP);
             case 3:
-                //TODO case 3 - log button
+                return new LogFragment();
             default:
                 String title = "Row " + row + " col " + col;
                 return CardFragment.create(title, title);
