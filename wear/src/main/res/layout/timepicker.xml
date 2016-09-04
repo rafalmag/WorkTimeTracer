@@ -11,7 +11,7 @@
         android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal|top"
@@ -19,7 +19,7 @@
             android:textAlignment="center"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
-        <TimePicker
+        <test.android.rafalmag.pl.worktimetracker.CompatibleTimePicker
             android:id="@+id/timePicker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -27,7 +27,7 @@
             android:timePickerMode="spinner" />
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/nowButton"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

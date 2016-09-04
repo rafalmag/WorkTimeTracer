@@ -17,18 +17,19 @@ public class MainPagerAdapter extends FragmentGridPagerAdapter {
 
     @Override
     public Fragment getFragment(int row, int col) {
-        String title = "Row " + row + " col " + col;
-        if(col==0){
-            return new MainFragment();
+        switch (col){
+            case 0:
+                return new MainFragment();
+            case 1:
+                return TimePickerFragment.create(TimePickerFragment.Mode.START);
+            case 2:
+                return TimePickerFragment.create(TimePickerFragment.Mode.STOP);
+            case 3:
+                //TODO case 3 - log button
+            default:
+                String title = "Row " + row + " col " + col;
+                return CardFragment.create(title, title);
         }
-        CardFragment fragment = CardFragment.create(title, title);
-
-        // Advanced settings (card gravity, card expansion/scrolling)
-//        fragment.setCardGravity(page.cardGravity);
-//        fragment.setExpansionEnabled(page.expansionEnabled);
-//        fragment.setExpansionDirection(page.expansionDirection);
-//        fragment.setExpansionFactor(page.expansionFactor);
-        return fragment;
     }
 
     // Obtain the number of pages (vertical)
