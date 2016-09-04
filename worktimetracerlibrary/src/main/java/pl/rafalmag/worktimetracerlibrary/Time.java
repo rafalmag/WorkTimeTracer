@@ -13,6 +13,14 @@ public class Time {
         this.minutes = minutes;
     }
 
+    public int getHours() {
+        return hours;
+    }
+
+    public int getMinutes() {
+        return minutes;
+    }
+
     public Date toDate() {
         return toCalendar().getTime();
     }
