@@ -1,4 +1,4 @@
-package test.android.rafalmag.pl.worktimetracker;
+package pl.rafalmag.worktimetracker.wear;
 
 import android.app.Fragment;
 import android.app.FragmentManager;

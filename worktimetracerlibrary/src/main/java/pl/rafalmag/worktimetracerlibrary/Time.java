@@ -1,4 +1,4 @@
-package pl.rafalmag.worktimetracker;
+package pl.rafalmag.worktimetracerlibrary;
 
 import java.util.Calendar;
 import java.util.Date;

@@ -25,6 +25,10 @@ import java.util.Observer;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import pl.rafalmag.worktimetracerlibrary.DateUtils;
+import pl.rafalmag.worktimetracerlibrary.MinutesHolder;
+import pl.rafalmag.worktimetracerlibrary.NonScrollableTimePicker;
+import pl.rafalmag.worktimetracerlibrary.Time;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -56,6 +60,7 @@ public class WorkTimeTrackerFragment extends Fragment {
     private OnTimeChangedListener onTimeChangedListener;
     // strong reference
     private SharedPreferences.OnSharedPreferenceChangeListener workTimePreferenceChangeListenerForDiff;
+    private Observer diffHolderObserver;
 
     public WorkTimeTrackerFragment() {
     }
@@ -132,12 +137,13 @@ public class WorkTimeTrackerFragment extends Fragment {
 
     private void initDiffText() {
         final MinutesHolder diffHolder = ((WorkTimeTrackerApp) getActivity().getApplication()).getDiffHolder();
-        diffHolder.addObserver(new Observer() {
+        diffHolderObserver = new Observer() {
             @Override
             public void update(Observable observable, Object data) {
                 updateDiffText((Minutes) data);
             }
-        });
+        };
+        diffHolder.addObserver(diffHolderObserver);
 
         workTimePreferenceChangeListenerForDiff = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
@@ -204,4 +210,12 @@ public class WorkTimeTrackerFragment extends Fragment {
         editor.putInt(STOP_MINS, stopTimePicker.getMinute());
         editor.apply();
     }
+
+//    @Override
+//    public void onDestroyView() {
+//        super.onDestroyView();
+//        PreferenceManager.getDefaultSharedPreferences(getActivity()).unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
+//        final MinutesHolder diffHolder = ((WorkTimeTrackerApp) getActivity().getApplication()).getDiffHolder();
+//        diffHolder.deleteObserver(diffHolderObserver);
+//    }
 }

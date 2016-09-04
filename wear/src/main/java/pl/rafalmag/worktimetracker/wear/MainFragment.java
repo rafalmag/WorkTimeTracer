@@ -1,4 +1,4 @@
-package test.android.rafalmag.pl.worktimetracker;
+package pl.rafalmag.worktimetracker.wear;
 
 
 import android.app.Fragment;
@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import test.android.rafalmag.pl.worktimetracker.R;
 
 public class MainFragment extends Fragment {
 

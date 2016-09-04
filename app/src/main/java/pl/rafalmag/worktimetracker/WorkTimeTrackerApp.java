@@ -6,6 +6,8 @@ import android.util.Log;
 
 import org.joda.time.Minutes;
 
+import pl.rafalmag.worktimetracerlibrary.MinutesHolder;
+
 public class WorkTimeTrackerApp extends Application {
 
     private static final String TAG = WorkTimeTrackerApp.class.getCanonicalName();

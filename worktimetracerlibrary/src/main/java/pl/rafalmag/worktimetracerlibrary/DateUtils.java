@@ -1,4 +1,4 @@
-package pl.rafalmag.worktimetracker;
+package pl.rafalmag.worktimetracerlibrary;
 
 import org.joda.time.DateTime;
 import org.joda.time.Duration;

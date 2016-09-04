@@ -1,4 +1,4 @@
-package pl.rafalmag.worktimetracker;
+package pl.rafalmag.worktimetracerlibrary;
 
 
 import android.annotation.TargetApi;
@@ -9,7 +9,7 @@ import android.view.MotionEvent;
 import android.view.ViewParent;
 import android.widget.TimePicker;
 
-public class NonScrollableTimePicker extends TimePicker {
+public class NonScrollableTimePicker extends CompatibleTimePicker {
     public NonScrollableTimePicker(Context context) {
         super(context);
     }
@@ -39,43 +39,5 @@ public class NonScrollableTimePicker extends TimePicker {
         return false;
     }
 
-    @SuppressWarnings("deprecation")
-    @Override
-    public void setHour(int hour) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            super.setHour(hour);
-        } else {
-            super.setCurrentHour(hour);
-        }
-    }
 
-    @SuppressWarnings("deprecation")
-    @Override
-    public int getHour() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return super.getHour();
-        } else {
-            return super.getCurrentHour();
-        }
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public void setMinute(int minute) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            super.setMinute(minute);
-        } else {
-            super.setCurrentMinute(minute);
-        }
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public int getMinute() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return super.getMinute();
-        } else {
-            return super.getCurrentMinute();
-        }
-    }
 }

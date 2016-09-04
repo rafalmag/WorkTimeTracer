@@ -19,7 +19,7 @@
             android:textAlignment="center"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
-        <test.android.rafalmag.pl.worktimetracker.CompatibleTimePicker
+        <pl.rafalmag.worktimetracerlibrary.CompatibleTimePicker
             android:id="@+id/timePicker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

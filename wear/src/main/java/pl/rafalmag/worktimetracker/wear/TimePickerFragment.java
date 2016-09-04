@@ -1,23 +1,19 @@
-package test.android.rafalmag.pl.worktimetracker;
+package pl.rafalmag.worktimetracker.wear;
 
 import android.app.Fragment;
-import android.media.tv.TvView;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
-import android.widget.TimePicker;
 
 import org.joda.time.DateTime;
-
-import java.util.Calendar;
-import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import pl.rafalmag.worktimetracerlibrary.CompatibleTimePicker;
+import test.android.rafalmag.pl.worktimetracker.R;
 
 public class TimePickerFragment extends Fragment {
 
