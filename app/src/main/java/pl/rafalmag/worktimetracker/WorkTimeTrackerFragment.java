@@ -211,11 +211,11 @@ public class WorkTimeTrackerFragment extends Fragment {
         editor.apply();
     }
 
-//    @Override
-//    public void onDestroyView() {
-//        super.onDestroyView();
-//        PreferenceManager.getDefaultSharedPreferences(getActivity()).unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
-//        final MinutesHolder diffHolder = ((WorkTimeTrackerApp) getActivity().getApplication()).getDiffHolder();
-//        diffHolder.deleteObserver(diffHolderObserver);
-//    }
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        PreferenceManager.getDefaultSharedPreferences(getActivity()).unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
+        final MinutesHolder diffHolder = ((WorkTimeTrackerApp) getActivity().getApplication()).getDiffHolder();
+        diffHolder.deleteObserver(diffHolderObserver);
+    }
 }
