@@ -6,7 +6,6 @@ import android.support.wearable.view.GridViewPager;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import test.android.rafalmag.pl.worktimetracker.R;
 
 public class WearActivity extends Activity {
 

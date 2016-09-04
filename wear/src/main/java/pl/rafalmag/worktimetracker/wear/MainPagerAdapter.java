@@ -17,7 +17,7 @@ public class MainPagerAdapter extends FragmentGridPagerAdapter {
 
     @Override
     public Fragment getFragment(int row, int col) {
-        switch (col){
+        switch (col) {
             case 0:
                 return new MainFragment();
             case 1:

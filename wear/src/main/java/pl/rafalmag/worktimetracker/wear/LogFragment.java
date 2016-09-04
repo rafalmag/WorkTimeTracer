@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import test.android.rafalmag.pl.worktimetracker.R;
 
 
 public class LogFragment extends Fragment {
@@ -32,7 +31,7 @@ public class LogFragment extends Fragment {
         mDelayedView.setListener(new DelayedConfirmationView.DelayedConfirmationListener() {
             @Override
             public void onTimerFinished(View view) {
-                running=false;
+                running = false;
                 // User didn't cancel, perform the action
                 Intent intent = new Intent(getActivity(), ConfirmationActivity.class);
                 intent.putExtra(ConfirmationActivity.EXTRA_ANIMATION_TYPE, ConfirmationActivity.SUCCESS_ANIMATION);
@@ -46,11 +45,11 @@ public class LogFragment extends Fragment {
 
             @Override
             public void onTimerSelected(View view) {
-                if(running) {
+                if (running) {
                     // User canceled, abort the action
                     mDelayedView.reset();
                     running = false;
-                }else {
+                } else {
                     mDelayedView.setTotalTimeMs(2000);
                     // Start the timer
                     mDelayedView.start();

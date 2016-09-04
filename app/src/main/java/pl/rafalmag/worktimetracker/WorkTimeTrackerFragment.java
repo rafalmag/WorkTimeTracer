@@ -185,7 +185,7 @@ public class WorkTimeTrackerFragment extends Fragment {
 
     @Override
     public void onPause() {
-        super.onStop();
+        super.onPause();
         saveTimePickerValues();
     }
 
