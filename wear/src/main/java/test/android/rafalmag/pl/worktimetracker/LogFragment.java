@@ -32,27 +32,33 @@ public class LogFragment extends Fragment {
         mDelayedView.setListener(new DelayedConfirmationView.DelayedConfirmationListener() {
             @Override
             public void onTimerFinished(View view) {
+                running=false;
                 // User didn't cancel, perform the action
                 Intent intent = new Intent(getActivity(), ConfirmationActivity.class);
                 intent.putExtra(ConfirmationActivity.EXTRA_ANIMATION_TYPE, ConfirmationActivity.SUCCESS_ANIMATION);
                 intent.putExtra(ConfirmationActivity.EXTRA_MESSAGE, getString(R.string.time_logged));
                 startActivity(intent);
+                mDelayedView.reset();
+                //TODO go to first page
             }
+
+            boolean running = false;
 
             @Override
             public void onTimerSelected(View view) {
-                // User canceled, abort the action
+                if(running) {
+                    // User canceled, abort the action
+                    mDelayedView.reset();
+                    running = false;
+                }else {
+                    mDelayedView.setTotalTimeMs(2000);
+                    // Start the timer
+                    mDelayedView.start();
+                    running = true;
+                }
             }
         });
         return view;
     }
 
-//FIXME it does not work, figure out other way to start this
-    @OnClick(R.id.delayed_confirm)
-    public void log(View view) {
-        // Two seconds to cancel the action
-        mDelayedView.setTotalTimeMs(2000);
-        // Start the timer
-        mDelayedView.start();
-    }
 }
