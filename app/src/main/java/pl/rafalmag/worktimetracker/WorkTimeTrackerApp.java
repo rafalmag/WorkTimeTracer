@@ -9,12 +9,13 @@ public class WorkTimeTrackerApp extends Application {
 
     private static final String TAG = WorkTimeTrackerApp.class.getCanonicalName();
 
-    private final WorkTimeTracerManager workTimeTracerManager = new WorkTimeTracerManager(this);
+    private WorkTimeTracerManager workTimeTracerManager;
 
     @Override
     public void onCreate() {
         super.onCreate();
         initExceptionHandler();
+        workTimeTracerManager = new WorkTimeTracerManager(this);
     }
 
     private void initExceptionHandler() {
