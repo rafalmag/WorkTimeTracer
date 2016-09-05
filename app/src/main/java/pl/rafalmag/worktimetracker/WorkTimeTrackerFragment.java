@@ -95,10 +95,11 @@ public class WorkTimeTrackerFragment extends Fragment {
 
             @Override
             public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
+                WorkTimeTracerManager workTimeTracerManager = ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager();
                 Time startTime = new Time(startTimePicker.getHour(), startTimePicker.getMinute());
+                workTimeTracerManager.getStartTimeHolder().setTime(startTime);
                 Time stopTime = new Time(stopTimePicker.getHour(), stopTimePicker.getMinute());
-                Minutes diff = DateUtils.diff(startTime, stopTime);
-                ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager().getDiffHolder().setMinutes(diff);
+                workTimeTracerManager.getStopTimeHolder().setTime(stopTime);
             }
         };
 
@@ -111,8 +112,8 @@ public class WorkTimeTrackerFragment extends Fragment {
 
     private void initTimePickers() {
         WorkTimeTracerManager workTimeTracerManager = ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager();
-        Time startTime = workTimeTracerManager.getStartTime();
-        Time stopTime = workTimeTracerManager.getStopTime();
+        Time startTime = workTimeTracerManager.getStartTimeHolder().getTime();
+        Time stopTime = workTimeTracerManager.getStopTimeHolder().getTime();
 
         boolean is24h = DateFormat.is24HourFormat(getContext());
         initTimePicker(startTimePicker, is24h, startTime);

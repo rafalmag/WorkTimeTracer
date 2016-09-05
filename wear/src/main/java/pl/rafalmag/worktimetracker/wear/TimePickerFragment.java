@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import org.joda.time.DateTime;
 
@@ -23,25 +24,35 @@ public class TimePickerFragment extends Fragment {
         START("Start") {
             @Override
             public Time getTime(WorkTimeTracerManager workTimeTracerManager) {
-                return workTimeTracerManager.getStartTime();
+                return workTimeTracerManager.getStartTimeHolder().getTime();
             }
 
             @Override
             public void saveTime(WorkTimeTracerManager workTimeTracerManager, Time startTime) {
-                Time stopTime = workTimeTracerManager.getStopTime();
+                Time stopTime = workTimeTracerManager.getStopTimeHolder().getTime();
                 workTimeTracerManager.saveStartStopTime(startTime, stopTime);
+            }
+
+            @Override
+            public void setTime(WorkTimeTracerManager workTimeTracerManager, Time startTime) {
+                workTimeTracerManager.getStartTimeHolder().setTime(startTime);
             }
         },
         STOP("Stop") {
             @Override
             public Time getTime(WorkTimeTracerManager workTimeTracerManager) {
-                return workTimeTracerManager.getStopTime();
+                return workTimeTracerManager.getStopTimeHolder().getTime();
             }
 
             @Override
             public void saveTime(WorkTimeTracerManager workTimeTracerManager, Time stopTime) {
-                Time startTime = workTimeTracerManager.getStartTime();
+                Time startTime = workTimeTracerManager.getStartTimeHolder().getTime();
                 workTimeTracerManager.saveStartStopTime(startTime, stopTime);
+            }
+
+            @Override
+            public void setTime(WorkTimeTracerManager workTimeTracerManager, Time stopTime) {
+                workTimeTracerManager.getStopTimeHolder().setTime(stopTime);
             }
         };
 
@@ -59,6 +70,8 @@ public class TimePickerFragment extends Fragment {
         }
 
         public abstract void saveTime(WorkTimeTracerManager workTimeTracerManager, Time time);
+
+        public abstract void setTime(WorkTimeTracerManager workTimeTracerManager, Time time);
     }
 
     public static TimePickerFragment create(Mode mode) {
@@ -76,6 +89,8 @@ public class TimePickerFragment extends Fragment {
     @BindView(R.id.timePicker)
     CompatibleTimePicker timePicker;
 
+    private TimePicker.OnTimeChangedListener onTimeChangedListener;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.timepicker, container, false);
@@ -87,12 +102,20 @@ public class TimePickerFragment extends Fragment {
     }
 
     private void initTimePicker() {
-        WorkTimeTracerManager workTimeTracerManager = ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager();
+        final WorkTimeTracerManager workTimeTracerManager = ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager();
         Time time = mode.getTime(workTimeTracerManager);
 
         boolean is24h = DateFormat.is24HourFormat(getActivity());
         timePicker.setIs24HourView(is24h);
-//        timePicker.setOnTimeChangedListener(onTimeChangedListener);
+        onTimeChangedListener = new TimePicker.OnTimeChangedListener() {
+
+            @Override
+            public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
+                Time time = new Time(timePicker.getHour(), timePicker.getMinute());
+                mode.setTime(workTimeTracerManager,time);
+            }
+        };
+        timePicker.setOnTimeChangedListener(onTimeChangedListener);
         timePicker.setHour(time.getHours());
         timePicker.setMinute(time.getMinutes());
     }
