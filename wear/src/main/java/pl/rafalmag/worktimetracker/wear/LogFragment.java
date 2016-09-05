@@ -33,6 +33,7 @@ public class LogFragment extends Fragment {
             public void onTimerFinished(View view) {
                 running = false;
                 // User didn't cancel, perform the action
+                //FIXME NPE - getActivity() can have null context when scrolled out... handle it like cancel!
                 Intent intent = new Intent(getActivity(), ConfirmationActivity.class);
                 intent.putExtra(ConfirmationActivity.EXTRA_ANIMATION_TYPE, ConfirmationActivity.SUCCESS_ANIMATION);
                 intent.putExtra(ConfirmationActivity.EXTRA_MESSAGE, getString(R.string.time_logged));
