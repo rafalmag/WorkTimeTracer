@@ -1,36 +1,35 @@
 package pl.rafalmag.worktimetracker.wear;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.support.wearable.view.CardFragment;
 import android.support.wearable.view.FragmentGridPagerAdapter;
-import android.support.wearable.view.GridViewPager;
-import android.util.Log;
-import android.view.ViewGroup;
 
-import java.util.Arrays;
-import java.util.List;
+public class MainPagerAdapter extends FragmentGridPagerAdapter {
 
-public class MainPagerAdapter extends FragmentGridPagerAdapter /*implements GridViewPager.OnPageChangeListener*/ {
+    private final Context mContext;
 
-    private static final String TAG = MainPagerAdapter.class.getCanonicalName();
-    private final Activity activity;
-
-    private final List<Fragment> fragments = Arrays.<Fragment>asList(
-            new MainFragment(),
-            TimePickerFragment.create(TimePickerFragment.Mode.START),
-            TimePickerFragment.create(TimePickerFragment.Mode.STOP),
-            new LogFragment());
-
-    public MainPagerAdapter(Activity activity, FragmentManager fm) {
+    public MainPagerAdapter(Context ctx, FragmentManager fm) {
         super(fm);
-        this.activity = activity;
+        mContext = ctx;
     }
 
     @Override
     public Fragment getFragment(int row, int col) {
-       return fragments.get(col);
+        switch (col) {
+            case 0:
+                return new MainFragment();
+            case 1:
+                return TimePickerFragment.create(TimePickerFragment.Mode.START);
+            case 2:
+                return TimePickerFragment.create(TimePickerFragment.Mode.STOP);
+            case 3:
+                return new LogFragment();
+            default:
+                String title = "Row " + row + " col " + col;
+                return CardFragment.create(title, title);
+        }
     }
 
     // Obtain the number of pages (vertical)
@@ -45,46 +44,4 @@ public class MainPagerAdapter extends FragmentGridPagerAdapter /*implements Grid
         return 4;
     }
 
-//    @Override
-//    public void finishUpdate(ViewGroup container) {
-//        super.finishUpdate(container);
-//        Log.v(TAG, "finishUpdate");
-//
-//        Fragment fragmentToShow = getFragment(currentRow, currentColumn);
-//        Log.v(TAG, "fragmentToShow (row=" + currentRow + " col=" + currentColumn + "):" + fragmentToShow.getClass().getSimpleName());
-////                if (fragmentToShow.isResumed()) {
-//        ((FragmentLifecycle) fragmentToShow).onResumeFragment(activity);
-////                }
-//
-//        Fragment fragmentToHide = getFragment(oldRow, oldColumn);
-//        Log.v(TAG, "fragmentToHide (row=" + oldRow + " col=" + oldColumn + "):" + fragmentToHide.getClass().getSimpleName());
-////                if (fragmentToHide.isResumed()) {
-//        ((FragmentLifecycle) fragmentToHide).onPauseFragment(activity);
-////                }
-//
-//    }
-//
-//
-//    int currentRow = 0;
-//    int currentColumn = 0;
-//    int oldRow = 0;
-//    int oldColumn = 0;
-//
-//    @Override
-//    public void onPageScrolled(int row, int column, float rowOffset, float columnOffset, int rowOffsetPixels, int columnOffsetPixels) {
-//
-//    }
-//
-//    @Override
-//    public void onPageSelected(int row, int column) {
-//        oldRow = currentRow;
-//        oldColumn = currentColumn;
-//        currentRow = row;
-//        currentColumn = column;
-//    }
-//
-//    @Override
-//    public void onPageScrollStateChanged(int state) {
-//
-//    }
 }

@@ -1,12 +1,10 @@
 package pl.rafalmag.worktimetracker.wear;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.wearable.activity.ConfirmationActivity;
 import android.support.wearable.view.DelayedConfirmationView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +13,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class LogFragment extends Fragment implements FragmentLifecycle{
-
-    private static final String TAG = LogFragment.class.getCanonicalName();
+public class LogFragment extends Fragment {
 
     @BindView(R.id.delayed_confirm)
     DelayedConfirmationView mDelayedView;
@@ -64,25 +60,4 @@ public class LogFragment extends Fragment implements FragmentLifecycle{
         return view;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.v(TAG, "onResume=" + this.getClass().getSimpleName());
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.v(TAG, "onPause=" + this.getClass().getSimpleName());
-    }
-
-    @Override
-    public void onResumeFragment(Activity activity) {
-        Log.v(TAG, "onResumeFragment=" + this.getClass().getSimpleName());
-    }
-
-    @Override
-    public void onPauseFragment(Activity activity) {
-        Log.v(TAG, "onPauseFragment=" + this.getClass().getSimpleName());
-    }
 }
