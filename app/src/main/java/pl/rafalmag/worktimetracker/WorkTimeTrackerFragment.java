@@ -147,9 +147,8 @@ public class WorkTimeTrackerFragment extends Fragment {
     }
 
     private void updateDiffText(Minutes diff) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        int workTimeMin = sharedPreferences.getInt(WorkTimeTracerManager.WORK_TIME, WorkTimeTracerManager.DEFAULT_WORK_TIME_MINUTES);
-        Minutes workTime = Minutes.minutes(workTimeMin);
+        Minutes workTime =((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager().getNormalWorkHours();
+
         Minutes workTimeDiff = diff.minus(workTime);
         String verboseDiff = " (" + (workTimeDiff.isGreaterThan(Minutes.ZERO) ? "+" : "") + DateUtils.minutesToText(workTimeDiff) + ")";
         diffText.setText("Diff: " + DateUtils.minutesToText(diff) + verboseDiff);

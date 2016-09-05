@@ -18,11 +18,11 @@ public class WorkTimeTracerManager {
 
     public static final String TOTAL_OVER_HOURS_AS_MINUTES = "total_over_hours_as_mins";
     public static final String WORK_TIME = "work_time";
-    public static final int DEFAULT_WORK_TIME_MINUTES = 8 * 60;
-    public static final String START_HOUR = "START_HOUR";
-    public static final String START_MINS = "START_MINS";
-    public static final String STOP_HOUR = "STOP_HOUR";
-    public static final String STOP_MINS = "STOP_MINS";
+    private static final int DEFAULT_WORK_TIME_MINUTES = 8 * 60;
+    private static final String START_HOUR = "START_HOUR";
+    private static final String START_MINS = "START_MINS";
+    private static final String STOP_HOUR = "STOP_HOUR";
+    private static final String STOP_MINS = "STOP_MINS";
     private final MinutesHolder diffHolder = new MinutesHolder();
     private final TimeHolder startTimeHolder = new TimeHolder();
     private final TimeHolder stopTimeHolder = new TimeHolder();
@@ -76,7 +76,7 @@ public class WorkTimeTracerManager {
     }
 
     public Minutes getNormalWorkHours() {
-        int mins = PreferenceManager.getDefaultSharedPreferences(context).getInt(WORK_TIME, 8 * 60);
+        int mins = PreferenceManager.getDefaultSharedPreferences(context).getInt(WORK_TIME, DEFAULT_WORK_TIME_MINUTES);
         return Minutes.minutes(mins);
     }
 
