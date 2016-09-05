@@ -6,6 +6,9 @@ import android.content.Context;
 import android.support.wearable.view.CardFragment;
 import android.support.wearable.view.FragmentGridPagerAdapter;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class MainPagerAdapter extends FragmentGridPagerAdapter {
 
     private final Context mContext;
@@ -15,21 +18,15 @@ public class MainPagerAdapter extends FragmentGridPagerAdapter {
         mContext = ctx;
     }
 
+    private final List<Fragment> fragments = Arrays.asList(
+            new MainFragment(),
+            TimePickerFragment.create(TimePickerFragment.Mode.START),
+            TimePickerFragment.create(TimePickerFragment.Mode.STOP),
+            new LogFragment());
+
     @Override
     public Fragment getFragment(int row, int col) {
-        switch (col) {
-            case 0:
-                return new MainFragment();
-            case 1:
-                return TimePickerFragment.create(TimePickerFragment.Mode.START);
-            case 2:
-                return TimePickerFragment.create(TimePickerFragment.Mode.STOP);
-            case 3:
-                return new LogFragment();
-            default:
-                String title = "Row " + row + " col " + col;
-                return CardFragment.create(title, title);
-        }
+        return fragments.get(col);
     }
 
     // Obtain the number of pages (vertical)
