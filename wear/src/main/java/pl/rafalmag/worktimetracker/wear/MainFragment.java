@@ -1,8 +1,10 @@
 package pl.rafalmag.worktimetracker.wear;
 
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +18,10 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import pl.rafalmag.worktimetracerlibrary.DateUtils;
+import pl.rafalmag.worktimetracerlibrary.Time;
 import pl.rafalmag.worktimetracerlibrary.WorkTimeTracerManager;
 
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment implements FragmentLifecycle{
 
     private static final String TAG = MainFragment.class.getCanonicalName();
     @BindView(R.id.mainText)
@@ -34,15 +37,38 @@ public class MainFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        WorkTimeTracerManager workTimeTracerManager = ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager();
+        Log.v(TAG, "onResume=" + this.getClass().getSimpleName() + " calling onResumeFragment");
+        onResumeFragment(getActivity());
+    }
+
+    @Override
+    public void onResumeFragment(Activity activity) {
+        Log.v(TAG, "onResumeFragment=" + this.getClass().getSimpleName());
+        WorkTimeTracerManager workTimeTracerManager = ((WorkTimeTrackerApp) activity.getApplication()).getWorkTimeTracerManager();
 
         Minutes overHours = workTimeTracerManager.getOverHours();
         // on wear emulator the short time formatter for pl_PL contains AM/PM - on real watch it is ok
         DateFormat timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT, Locale.getDefault());
-        String startTime = timeFormat.format(workTimeTracerManager.getStartTime().toDate());
-        String stopTime = timeFormat.format(workTimeTracerManager.getStopTime().toDate());
-        Minutes diff = workTimeTracerManager.diffHolder.getMinutes();
-        String text = "Over hours\n" + DateUtils.minutesToText(overHours) + "\nStart " + startTime + "\nStop " + stopTime + "\nDiff: " + DateUtils.minutesToText(diff);
+        Time startTime = workTimeTracerManager.getStartTime();
+        Time stopTime = workTimeTracerManager.getStopTime();
+        Minutes diff = DateUtils.diff(startTime, stopTime);
+        String text =
+                "Over hours\n" +
+                        DateUtils.minutesToText(overHours) + "\n" +
+                        "Start " + timeFormat.format(startTime.toDate()) + "\n" +
+                        "Stop " + timeFormat.format(stopTime.toDate()) + "\n" +
+                        "Diff: " + DateUtils.minutesToText(diff);
         mainText.setText(text);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.v(TAG, "onPause=" + this.getClass().getSimpleName());
+    }
+
+    @Override
+    public void onPauseFragment(Activity activity) {
+        Log.v(TAG, "onPauseFragment=" + this.getClass().getSimpleName());
     }
 }

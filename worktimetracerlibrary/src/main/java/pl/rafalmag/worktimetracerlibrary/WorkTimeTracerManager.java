@@ -20,6 +20,7 @@ public class WorkTimeTracerManager {
     public static final String START_MINS = "START_MINS";
     public static final String STOP_HOUR = "STOP_HOUR";
     public static final String STOP_MINS = "STOP_MINS";
+    @Deprecated
     public final MinutesHolder diffHolder = new MinutesHolder();
     private final Context context;
 
@@ -27,6 +28,8 @@ public class WorkTimeTracerManager {
         this.context = context;
     }
 
+    //TODO move to WorkTimeTrackerFragment
+    @Deprecated
     public MinutesHolder getDiffHolder() {
         return diffHolder;
     }

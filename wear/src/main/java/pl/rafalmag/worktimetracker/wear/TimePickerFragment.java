@@ -1,8 +1,10 @@
 package pl.rafalmag.worktimetracker.wear;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +19,8 @@ import pl.rafalmag.worktimetracerlibrary.CompatibleTimePicker;
 import pl.rafalmag.worktimetracerlibrary.Time;
 import pl.rafalmag.worktimetracerlibrary.WorkTimeTracerManager;
 
-public class TimePickerFragment extends Fragment {
+public class TimePickerFragment extends Fragment implements FragmentLifecycle {
+    private static final String TAG = TimePickerFragment.class.getCanonicalName();
 
     public enum Mode {
         START("Start") {
@@ -59,6 +62,7 @@ public class TimePickerFragment extends Fragment {
         }
 
         public abstract void saveTime(WorkTimeTracerManager workTimeTracerManager, Time time);
+
     }
 
     public static TimePickerFragment create(Mode mode) {
@@ -82,17 +86,24 @@ public class TimePickerFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         title.setText(mode.getText());
-        initTimePicker();
+        boolean is24h = DateFormat.is24HourFormat(getActivity());
+        timePicker.setIs24HourView(is24h);
+        //        timePicker.setOnTimeChangedListener(onTimeChangedListener);
         return view;
     }
 
-    private void initTimePicker() {
-        WorkTimeTracerManager workTimeTracerManager = ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager();
-        Time time = mode.getTime(workTimeTracerManager);
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.v(TAG, "onResume=" + this.getClass().getSimpleName() + " mode=" + mode + " calling onResumeFragment");
+        onResumeFragment(getActivity());
+    }
 
-        boolean is24h = DateFormat.is24HourFormat(getActivity());
-        timePicker.setIs24HourView(is24h);
-//        timePicker.setOnTimeChangedListener(onTimeChangedListener);
+    @Override
+    public void onResumeFragment(Activity activity) {
+        Log.v(TAG, "onResumeFragment=" + this.getClass().getSimpleName() + " mode=" + mode);
+        WorkTimeTracerManager workTimeTracerManager = ((WorkTimeTrackerApp) activity.getApplication()).getWorkTimeTracerManager();
+        Time time = mode.getTime(workTimeTracerManager);
         timePicker.setHour(time.getHours());
         timePicker.setMinute(time.getMinutes());
     }
@@ -100,12 +111,19 @@ public class TimePickerFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        saveTimePickerValues();
+        Log.v(TAG, "onPause=" + this.getClass().getSimpleName() + " mode=" + mode + " calling onPauseFragment");
+        onPauseFragment(getActivity());
     }
 
-    private void saveTimePickerValues() {
+    @Override
+    public void onPauseFragment(Activity activity) {
+        Log.v(TAG, "onPauseFragment=" + this.getClass().getSimpleName() + " mode=" + mode);
+        saveTimePickerValues(activity);
+    }
+
+    private void saveTimePickerValues(Activity activity) {
         Time time = new Time(timePicker.getHour(), timePicker.getMinute());
-        WorkTimeTracerManager workTimeTracerManager = ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager();
+        WorkTimeTracerManager workTimeTracerManager = ((WorkTimeTrackerApp) activity.getApplication()).getWorkTimeTracerManager();
         mode.saveTime(workTimeTracerManager, time);
     }
 
