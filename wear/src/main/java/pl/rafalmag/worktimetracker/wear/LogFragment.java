@@ -87,7 +87,7 @@ public class LogFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == LOG_CONFIRMATION_REQUEST_CODE) {
             //go to first page
-            gridViewPager.scrollTo(0, 0);
+            gridViewPager.setCurrentItem(0, 0, false);
         }
     }
 
