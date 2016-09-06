@@ -19,8 +19,7 @@
             android:focusable="false"
             minValue="0"
             maxValue="2147483646"
-            wrapSelectorWheel="false"
-            />
+            wrapSelectorWheel="false" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -35,7 +34,7 @@
             android:layout_height="wrap_content"
             android:focusable="false"
             minValue="0"
-            maxValue="59"/>
+            maxValue="59" />
     </LinearLayout>
 
     <RadioGroup
@@ -48,13 +47,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="over time" />
+            android:text="@string/over_time" />
 
         <RadioButton
             android:id="@+id/underTimeButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="under time" />
+            android:text="@string/under_time" />
     </RadioGroup>
 
 </LinearLayout>

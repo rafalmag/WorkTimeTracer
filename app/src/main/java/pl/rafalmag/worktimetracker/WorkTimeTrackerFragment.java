@@ -25,6 +25,11 @@ import java.util.Observer;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import pl.rafalmag.worktimetracerlibrary.DateUtils;
+import pl.rafalmag.worktimetracerlibrary.MinutesHolder;
+import pl.rafalmag.worktimetracerlibrary.NonScrollableTimePicker;
+import pl.rafalmag.worktimetracerlibrary.Time;
+import pl.rafalmag.worktimetracerlibrary.WorkTimeTracerManager;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -32,11 +37,6 @@ import butterknife.OnClick;
 public class WorkTimeTrackerFragment extends Fragment {
 
     private static final String TAG = WorkTimeTracker.class.getCanonicalName();
-
-    private static final String START_HOUR = "START_HOUR";
-    private static final String START_MINS = "START_MINS";
-    private static final String STOP_HOUR = "STOP_HOUR";
-    private static final String STOP_MINS = "STOP_MINS";
 
     @BindView(R.id.startTimePicker)
     NonScrollableTimePicker startTimePicker;
@@ -54,11 +54,37 @@ public class WorkTimeTrackerFragment extends Fragment {
     TextView diffText;
 
     private OnTimeChangedListener onTimeChangedListener;
-    // strong reference
-    private SharedPreferences.OnSharedPreferenceChangeListener workTimePreferenceChangeListenerForDiff;
+    // to keep it from GC
+    // http://stackoverflow.com/questions/2542938/sharedpreferences-onsharedpreferencechangelistener-not-being-called
+    // -consistently
+    private final SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener = new SharedPreferences
+            .OnSharedPreferenceChangeListener() {
 
-    public WorkTimeTrackerFragment() {
-    }
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            if (key.equals(WorkTimeTracerManager.TOTAL_OVER_HOURS_AS_MINUTES)) {
+                Log.d(TAG, key + " changed");
+                Minutes minutes = Minutes.minutes(sharedPreferences.getInt(key, 0));
+                updateOverHoursText(minutes);
+            }
+        }
+    };
+    // strong reference
+    private final SharedPreferences.OnSharedPreferenceChangeListener workTimePreferenceChangeListenerForDiff = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            final MinutesHolder diffHolder = ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager().getDiffHolder();
+            if (key.equals(WorkTimeTracerManager.WORK_TIME)) {
+                updateDiffText(diffHolder.getMinutes());
+            }
+        }
+    };
+    private final Observer diffHolderObserver = new Observer() {
+        @Override
+        public void update(Observable observable, Object data) {
+            updateDiffText((Minutes) data);
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -69,10 +95,11 @@ public class WorkTimeTrackerFragment extends Fragment {
 
             @Override
             public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
+                WorkTimeTracerManager workTimeTracerManager = ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager();
                 Time startTime = new Time(startTimePicker.getHour(), startTimePicker.getMinute());
+                workTimeTracerManager.getStartTimeHolder().setTime(startTime);
                 Time stopTime = new Time(stopTimePicker.getHour(), stopTimePicker.getMinute());
-                Minutes diff = DateUtils.diff(startTime, stopTime);
-                ((WorkTimeTrackerApp) getActivity().getApplication()).getDiffHolder().setMinutes(diff);
+                workTimeTracerManager.getStopTimeHolder().setTime(stopTime);
             }
         };
 
@@ -84,46 +111,27 @@ public class WorkTimeTrackerFragment extends Fragment {
     }
 
     private void initTimePickers() {
-        DateTime currentTime = new DateTime();
-        int currentHourOfDay = currentTime.getHourOfDay();
-        int currentMinuteOfHour = currentTime.getMinuteOfHour();
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        int startHour = preferences.getInt(START_HOUR, currentHourOfDay);
-        int startMins = preferences.getInt(START_MINS, currentMinuteOfHour);
-        int stopHour = preferences.getInt(STOP_HOUR, currentHourOfDay);
-        int stopMins = preferences.getInt(STOP_MINS, currentMinuteOfHour);
+        WorkTimeTracerManager workTimeTracerManager = ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager();
+        Time startTime = workTimeTracerManager.getStartTimeHolder().getTime();
+        Time stopTime = workTimeTracerManager.getStopTimeHolder().getTime();
+
         boolean is24h = DateFormat.is24HourFormat(getContext());
-        initTimePicker(startTimePicker, is24h, startHour, startMins);
-        initTimePicker(stopTimePicker, is24h, stopHour, stopMins);
+        initTimePicker(startTimePicker, is24h, startTime);
+        initTimePicker(stopTimePicker, is24h, stopTime);
     }
 
-    private void initTimePicker(NonScrollableTimePicker timePicker, boolean is24h, int hour, int mins) {
+    private void initTimePicker(NonScrollableTimePicker timePicker, boolean is24h, Time time) {
         timePicker.setIs24HourView(is24h);
         timePicker.setOnTimeChangedListener(onTimeChangedListener);
-        timePicker.setHour(hour);
-        timePicker.setMinute(mins);
+        timePicker.setHour(time.getHours());
+        timePicker.setMinute(time.getMinutes());
     }
 
-    // to keep it from GC
-    // http://stackoverflow.com/questions/2542938/sharedpreferences-onsharedpreferencechangelistener-not-being-called
-    // -consistently
-    private final SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener = new SharedPreferences
-            .OnSharedPreferenceChangeListener() {
-
-        @Override
-        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            if (key.equals(WorkTimeTrackerApp.TOTAL_OVER_HOURS_AS_MINUTES)) {
-                Log.d(TAG, key + " changed");
-                Minutes minutes = Minutes.minutes(sharedPreferences.getInt(key, 0));
-                updateOverHoursText(minutes);
-            }
-        }
-    };
 
     private void initOverHoursText() {
         PreferenceManager.getDefaultSharedPreferences(getActivity()).registerOnSharedPreferenceChangeListener
                 (preferenceChangeListener);
-        updateOverHoursText(((WorkTimeTrackerApp) getActivity().getApplication()).getOverHours());
+        updateOverHoursText(((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager().getOverHours());
     }
 
     private void updateOverHoursText(Minutes minutes) {
@@ -131,31 +139,15 @@ public class WorkTimeTrackerFragment extends Fragment {
     }
 
     private void initDiffText() {
-        final MinutesHolder diffHolder = ((WorkTimeTrackerApp) getActivity().getApplication()).getDiffHolder();
-        diffHolder.addObserver(new Observer() {
-            @Override
-            public void update(Observable observable, Object data) {
-                updateDiffText((Minutes) data);
-            }
-        });
+        final MinutesHolder diffHolder = ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager().getDiffHolder();
+        diffHolder.addObserver(diffHolderObserver);
 
-        workTimePreferenceChangeListenerForDiff = new SharedPreferences.OnSharedPreferenceChangeListener() {
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                if (key.equals(WorkTimeTrackerApp.WORK_TIME)) {
-                    updateDiffText(diffHolder.getMinutes());
-                }
-            }
-        };
         PreferenceManager.getDefaultSharedPreferences(getActivity()).registerOnSharedPreferenceChangeListener(workTimePreferenceChangeListenerForDiff);
-
         updateDiffText(diffHolder.getMinutes());
     }
 
     private void updateDiffText(Minutes diff) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        int workTimeMin = sharedPreferences.getInt(WorkTimeTrackerApp.WORK_TIME, WorkTimeTrackerApp.DEFAULT_WORK_TIME_MINUTES);
-        Minutes workTime = Minutes.minutes(workTimeMin);
+        Minutes workTime = ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager().getNormalWorkHours();
         Minutes workTimeDiff = diff.minus(workTime);
         String verboseDiff = " (" + (workTimeDiff.isGreaterThan(Minutes.ZERO) ? "+" : "") + DateUtils.minutesToText(workTimeDiff) + ")";
         diffText.setText("Diff: " + DateUtils.minutesToText(diff) + verboseDiff);
@@ -179,12 +171,12 @@ public class WorkTimeTrackerFragment extends Fragment {
 
     @OnClick(R.id.log)
     public void log(View view) {
-        WorkTimeTrackerApp app = ((WorkTimeTrackerApp) getActivity().getApplication());
-        Minutes diff = app.getDiffHolder().getMinutes();
-        Minutes todayOverHours = diff.minus(app.getNormalWorkHours());
-        Minutes totalOverHours = app.getOverHours();
+        WorkTimeTracerManager workTimeTracerManager = ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager();
+        Minutes diff = workTimeTracerManager.getDiffHolder().getMinutes();
+        Minutes todayOverHours = diff.minus(workTimeTracerManager.getNormalWorkHours());
+        Minutes totalOverHours = workTimeTracerManager.getOverHours();
         Minutes newOverHours = totalOverHours.plus(todayOverHours);
-        app.saveOverHours(newOverHours);
+        workTimeTracerManager.saveOverHours(newOverHours);
         // android M - request permission done in main activity
         Vibrator vibe = (Vibrator) getActivity().getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
         vibe.vibrate(50); // 50 is time in ms
@@ -192,16 +184,22 @@ public class WorkTimeTrackerFragment extends Fragment {
 
     @Override
     public void onPause() {
-        super.onStop();
+        super.onPause();
         saveTimePickerValues();
     }
 
     private void saveTimePickerValues() {
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
-        editor.putInt(START_HOUR, startTimePicker.getHour());
-        editor.putInt(START_MINS, startTimePicker.getMinute());
-        editor.putInt(STOP_HOUR, stopTimePicker.getHour());
-        editor.putInt(STOP_MINS, stopTimePicker.getMinute());
-        editor.apply();
+        Time startTime = new Time(startTimePicker.getHour(), startTimePicker.getMinute());
+        Time stopTime = new Time(stopTimePicker.getHour(), stopTimePicker.getMinute());
+        ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager().saveStartStopTime(startTime, stopTime);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        PreferenceManager.getDefaultSharedPreferences(getActivity()).unregisterOnSharedPreferenceChangeListener(workTimePreferenceChangeListenerForDiff);
+        PreferenceManager.getDefaultSharedPreferences(getActivity()).unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
+        final MinutesHolder diffHolder = ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager().getDiffHolder();
+        diffHolder.deleteObserver(diffHolderObserver);
     }
 }

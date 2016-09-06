@@ -25,7 +25,7 @@
             android:layout_gravity="center"
             android:text="@string/start_time" />
 
-        <pl.rafalmag.worktimetracker.NonScrollableTimePicker
+        <pl.rafalmag.worktimetracerlibrary.NonScrollableTimePicker
             android:id="@+id/startTimePicker"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" />
@@ -44,7 +44,7 @@
             android:layout_gravity="center"
             android:text="@string/stop_time" />
 
-        <pl.rafalmag.worktimetracker.NonScrollableTimePicker
+        <pl.rafalmag.worktimetracerlibrary.NonScrollableTimePicker
             android:id="@+id/stopTimePicker"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" />

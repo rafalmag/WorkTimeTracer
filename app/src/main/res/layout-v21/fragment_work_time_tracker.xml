@@ -31,16 +31,15 @@
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
+            android:layout_height="match_parent">
 
             <!-- glue to fill left space-->
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="1"
-                />
-            <pl.rafalmag.worktimetracker.NonScrollableTimePicker
+                android:layout_weight="1" />
+
+            <pl.rafalmag.worktimetracerlibrary.NonScrollableTimePicker
                 android:id="@+id/startTimePicker"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -58,8 +57,7 @@
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="1"
-                />
+                android:layout_weight="1" />
         </LinearLayout>
 
         <TextView
@@ -78,10 +76,9 @@
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="1"
-                />
+                android:layout_weight="1" />
 
-            <pl.rafalmag.worktimetracker.NonScrollableTimePicker
+            <pl.rafalmag.worktimetracerlibrary.NonScrollableTimePicker
                 android:id="@+id/stopTimePicker"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -98,8 +95,7 @@
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="1"
-                />
+                android:layout_weight="1" />
         </LinearLayout>
 
         <TextView
@@ -107,7 +103,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Diff:" />
+            android:text="@string/diff_time" />
 
         <Button
             android:id="@+id/log"

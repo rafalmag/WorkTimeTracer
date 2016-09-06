@@ -1,4 +1,4 @@
-package pl.rafalmag.worktimetracker;
+package pl.rafalmag.worktimetracerlibrary;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -11,6 +11,14 @@ public class Time {
     public Time(int hours, int minutes) {
         this.hours = hours;
         this.minutes = minutes;
+    }
+
+    public int getHours() {
+        return hours;
+    }
+
+    public int getMinutes() {
+        return minutes;
     }
 
     public Date toDate() {

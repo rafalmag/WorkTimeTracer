@@ -1,9 +1,9 @@
-package pl.rafalmag.worktimetracker;
+package pl.rafalmag.worktimetracerlibrary;
 
+import org.hamcrest.Matchers;
 import org.joda.time.Minutes;
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 
@@ -16,7 +16,7 @@ public class DateUtilsTest {
         //when
         String text = DateUtils.minutesToText(minutes);
         //then
-        assertThat(text, equalTo("1 h 1 min"));
+        assertThat(text, Matchers.equalTo("1 h 1 min"));
     }
 
     @Test
@@ -26,7 +26,7 @@ public class DateUtilsTest {
         //when
         String text = DateUtils.minutesToText(minutes);
         //then
-        assertThat(text, equalTo("0 min"));
+        assertThat(text, Matchers.equalTo("0 min"));
     }
 
     @Test
@@ -36,7 +36,7 @@ public class DateUtilsTest {
         //when
         String text = DateUtils.minutesToText(minutes);
         //then
-        assertThat(text, equalTo("1 day"));
+        assertThat(text, Matchers.equalTo("1 day"));
     }
 
     @Test
@@ -46,7 +46,7 @@ public class DateUtilsTest {
         //when
         String text = DateUtils.minutesToText(minutes);
         //then
-        assertThat(text, equalTo("-15 min"));
+        assertThat(text, Matchers.equalTo("-15 min"));
     }
 
     @Test
@@ -56,7 +56,7 @@ public class DateUtilsTest {
         //when
         String text = DateUtils.minutesToText(minutes);
         //then
-        assertThat(text, equalTo("-1 h 39 min"));
+        assertThat(text, Matchers.equalTo("-1 h 39 min"));
     }
 
     @Test
@@ -68,7 +68,7 @@ public class DateUtilsTest {
         Minutes diff = DateUtils.diff(startDate, endDate);
         String diffText = DateUtils.minutesToText(diff);
         //then
-        assertThat(diffText, equalTo("7 h 59 min"));
+        assertThat(diffText, Matchers.equalTo("7 h 59 min"));
     }
 
     @Test
@@ -80,6 +80,6 @@ public class DateUtilsTest {
         Minutes diff = DateUtils.diff(startDate, endDate);
         String diffText = DateUtils.minutesToText(diff);
         //then
-        assertThat(diffText, equalTo("22 h 59 min"));
+        assertThat(diffText, Matchers.equalTo("22 h 59 min"));
     }
 }
