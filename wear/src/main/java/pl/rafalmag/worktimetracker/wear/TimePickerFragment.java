@@ -112,7 +112,7 @@ public class TimePickerFragment extends Fragment {
             @Override
             public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
                 Time time = new Time(timePicker.getHour(), timePicker.getMinute());
-                mode.setTime(workTimeTracerManager,time);
+                mode.setTime(workTimeTracerManager, time);
             }
         };
         timePicker.setOnTimeChangedListener(onTimeChangedListener);

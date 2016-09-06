@@ -17,7 +17,7 @@ public class WearActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wear);
         ButterKnife.bind(this);
-        pager.setAdapter(new MainPagerAdapter(this, getFragmentManager()));
+        pager.setAdapter(new MainPagerAdapter(pager, getFragmentManager()));
     }
 
 }

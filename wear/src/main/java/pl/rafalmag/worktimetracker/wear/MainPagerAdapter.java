@@ -2,27 +2,25 @@ package pl.rafalmag.worktimetracker.wear;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.Context;
-import android.support.wearable.view.CardFragment;
 import android.support.wearable.view.FragmentGridPagerAdapter;
+import android.support.wearable.view.GridViewPager;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class MainPagerAdapter extends FragmentGridPagerAdapter {
 
-    private final Context mContext;
 
-    public MainPagerAdapter(Context ctx, FragmentManager fm) {
+    private final List<Fragment> fragments;
+    public MainPagerAdapter(GridViewPager gridViewPager, FragmentManager fm) {
         super(fm);
-        mContext = ctx;
+        fragments = Arrays.asList(
+                new MainFragment(),
+                TimePickerFragment.create(TimePickerFragment.Mode.START),
+                TimePickerFragment.create(TimePickerFragment.Mode.STOP),
+                LogFragment.create(gridViewPager));
     }
 
-    private final List<Fragment> fragments = Arrays.asList(
-            new MainFragment(),
-            TimePickerFragment.create(TimePickerFragment.Mode.START),
-            TimePickerFragment.create(TimePickerFragment.Mode.STOP),
-            new LogFragment());
 
     @Override
     public Fragment getFragment(int row, int col) {
