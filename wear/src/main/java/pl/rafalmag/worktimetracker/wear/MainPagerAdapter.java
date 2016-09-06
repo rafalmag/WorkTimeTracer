@@ -10,8 +10,8 @@ import java.util.List;
 
 public class MainPagerAdapter extends FragmentGridPagerAdapter {
 
-
     private final List<Fragment> fragments;
+
     public MainPagerAdapter(GridViewPager gridViewPager, FragmentManager fm) {
         super(fm);
         fragments = Arrays.asList(
@@ -20,7 +20,6 @@ public class MainPagerAdapter extends FragmentGridPagerAdapter {
                 TimePickerFragment.create(TimePickerFragment.Mode.STOP),
                 LogFragment.create(gridViewPager));
     }
-
 
     @Override
     public Fragment getFragment(int row, int col) {

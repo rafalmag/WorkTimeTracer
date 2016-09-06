@@ -147,7 +147,7 @@ public class WorkTimeTrackerFragment extends Fragment {
     }
 
     private void updateDiffText(Minutes diff) {
-        Minutes workTime =((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager().getNormalWorkHours();
+        Minutes workTime = ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager().getNormalWorkHours();
         Minutes workTimeDiff = diff.minus(workTime);
         String verboseDiff = " (" + (workTimeDiff.isGreaterThan(Minutes.ZERO) ? "+" : "") + DateUtils.minutesToText(workTimeDiff) + ")";
         diffText.setText("Diff: " + DateUtils.minutesToText(diff) + verboseDiff);

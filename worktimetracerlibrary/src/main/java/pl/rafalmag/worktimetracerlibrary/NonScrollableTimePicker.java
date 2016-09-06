@@ -1,13 +1,11 @@
 package pl.rafalmag.worktimetracerlibrary;
 
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.ViewParent;
-import android.widget.TimePicker;
 
 public class NonScrollableTimePicker extends CompatibleTimePicker {
     public NonScrollableTimePicker(Context context) {

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="pl.rafalmag.worktimetracker">
-    <uses-permission android:name="android.permission.VIBRATE"/>
+
+    <uses-permission android:name="android.permission.VIBRATE" />
     <application
         android:name="WorkTimeTrackerApp"
         android:allowBackup="true"
@@ -18,8 +19,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".settings.SettingsActivity"
-            android:label="@string/action_settings"/>
+        <activity
+            android:name=".settings.SettingsActivity"
+            android:label="@string/action_settings" />
     </application>
 
 </manifest>

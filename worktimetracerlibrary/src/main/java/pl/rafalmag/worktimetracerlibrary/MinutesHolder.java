@@ -1,7 +1,5 @@
 package pl.rafalmag.worktimetracerlibrary;
 
-import android.support.annotation.VisibleForTesting;
-
 import org.joda.time.Minutes;
 
 import java.util.Observable;

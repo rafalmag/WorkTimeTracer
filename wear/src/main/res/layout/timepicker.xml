@@ -15,7 +15,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal|top"
-            android:text="Start"
+            android:text="@string/start"
             android:textAlignment="center"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
@@ -35,49 +35,5 @@
             android:text="@string/now" />
 
     </FrameLayout>
-
-    <!--<android.support.wearable.view.CardScrollView-->
-        <!--android:id="@+id/card_scroll_view"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent">-->
-
-        <!--<android.support.wearable.view.CardFrame-->
-            <!--android:layout_width="fill_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="bottom">-->
-
-            <!--<LinearLayout-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:orientation="horizontal"-->
-                <!--android:paddingLeft="5dp">-->
-
-                <!--<View-->
-                    <!--android:layout_width="0dp"-->
-                    <!--android:layout_height="0dp"-->
-                    <!--android:layout_weight="1"-->
-                    <!--/>-->
-                <!--<TextView-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_gravity="center"-->
-                    <!--android:fontFamily="sans-serif-light"-->
-                    <!--android:text="Now?"-->
-                    <!--android:textColor="@color/black"-->
-                    <!--android:textSize="20sp" />-->
-
-                <!--<android.support.wearable.view.CircledImageView-->
-                    <!--android:id="@+id/cancel_btn"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_gravity="right"-->
-                    <!--android:layout_marginLeft="25dp"-->
-                    <!--android:src="@color/red"-->
-                    <!--app:circle_color="@color/red"-->
-                    <!--app:circle_radius="25dp"-->
-                    <!--app:circle_radius_pressed="20dp" />-->
-            <!--</LinearLayout>-->
-        <!--</android.support.wearable.view.CardFrame>-->
-    <!--</android.support.wearable.view.CardScrollView>-->
 
 </android.support.wearable.view.BoxInsetLayout>
