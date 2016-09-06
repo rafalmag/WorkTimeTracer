@@ -21,7 +21,7 @@ import pl.rafalmag.worktimetracerlibrary.WorkTimeTracerManager;
 public class TimePickerFragment extends Fragment {
 
     public enum Mode {
-        START("Start") {
+        START(R.string.start) {
             @Override
             public Time getTime(WorkTimeTracerManager workTimeTracerManager) {
                 return workTimeTracerManager.getStartTimeHolder().getTime();
@@ -38,7 +38,7 @@ public class TimePickerFragment extends Fragment {
                 workTimeTracerManager.getStartTimeHolder().setTime(startTime);
             }
         },
-        STOP("Stop") {
+        STOP(R.string.stop) {
             @Override
             public Time getTime(WorkTimeTracerManager workTimeTracerManager) {
                 return workTimeTracerManager.getStopTimeHolder().getTime();
@@ -56,17 +56,16 @@ public class TimePickerFragment extends Fragment {
             }
         };
 
-        final String text;
+        final int textId;
 
-        Mode(String text) {
-            //TODO text id - to provide i18n
-            this.text = text;
+        Mode(int textId) {
+            this.textId = textId;
         }
 
         public abstract Time getTime(WorkTimeTracerManager workTimeTracerManager);
 
-        public String getText() {
-            return text;
+        public int getTextId() {
+            return textId;
         }
 
         public abstract void saveTime(WorkTimeTracerManager workTimeTracerManager, Time time);
@@ -78,7 +77,6 @@ public class TimePickerFragment extends Fragment {
         TimePickerFragment timePickerFragment = new TimePickerFragment();
         timePickerFragment.mode = mode;
         return timePickerFragment;
-
     }
 
     private Mode mode;
@@ -96,7 +94,7 @@ public class TimePickerFragment extends Fragment {
         View view = inflater.inflate(R.layout.timepicker, container, false);
         ButterKnife.bind(this, view);
 
-        title.setText(mode.getText());
+        title.setText(getText(mode.getTextId()));
         initTimePicker();
         return view;
     }
