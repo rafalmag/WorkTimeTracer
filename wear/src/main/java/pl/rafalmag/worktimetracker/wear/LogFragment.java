@@ -1,12 +1,10 @@
 package pl.rafalmag.worktimetracker.wear;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.wearable.activity.ConfirmationActivity;
 import android.support.wearable.view.DelayedConfirmationView;
-import android.support.wearable.view.GridPagerAdapter;
 import android.support.wearable.view.GridViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -88,14 +86,8 @@ public class LogFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == LOG_CONFIRMATION_REQUEST_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
-                //go to first page
-                //FIXME not working yet
-                gridViewPager.scrollTo(0,0);
-            }
-            if (resultCode == Activity.RESULT_CANCELED) {
-                //Write your code if there's no result
-            }
+            //go to first page
+            gridViewPager.scrollTo(0, 0);
         }
     }
 
