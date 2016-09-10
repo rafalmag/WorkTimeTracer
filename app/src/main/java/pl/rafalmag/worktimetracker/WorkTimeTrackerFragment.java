@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.TimePicker.OnTimeChangedListener;
+import android.widget.Toast;
 
 import org.joda.time.DateTime;
 import org.joda.time.Minutes;
@@ -135,7 +136,7 @@ public class WorkTimeTrackerFragment extends Fragment {
     }
 
     private void updateOverHoursText(Minutes minutes) {
-        overHours.setText("Over hours: " + DateUtils.minutesToText(minutes));
+        overHours.setText(getActivity().getString(R.string.overHours, DateUtils.minutesToText(minutes)));
     }
 
     private void initDiffText() {
@@ -150,7 +151,7 @@ public class WorkTimeTrackerFragment extends Fragment {
         Minutes workTime = ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager().getNormalWorkHours();
         Minutes workTimeDiff = diff.minus(workTime);
         String verboseDiff = " (" + (workTimeDiff.isGreaterThan(Minutes.ZERO) ? "+" : "") + DateUtils.minutesToText(workTimeDiff) + ")";
-        diffText.setText("Diff: " + DateUtils.minutesToText(diff) + verboseDiff);
+        diffText.setText(getActivity().getString(R.string.diff, DateUtils.minutesToText(diff) + verboseDiff));
     }
 
     @OnClick(R.id.startNow)
@@ -180,6 +181,7 @@ public class WorkTimeTrackerFragment extends Fragment {
         // android M - request permission done in main activity
         Vibrator vibe = (Vibrator) getActivity().getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
         vibe.vibrate(50); // 50 is time in ms
+        Toast.makeText(getActivity(), R.string.logged, Toast.LENGTH_LONG).show();
     }
 
     @Override

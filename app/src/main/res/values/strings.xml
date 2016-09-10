@@ -9,5 +9,8 @@
     <string name="log">Log</string>
     <string name="over_time">over time</string>
     <string name="under_time">under time</string>
+    <string name="logged">Time logged</string>
+    <string name="overHours">Over hours: %s</string>
+    <string name="diff">Diff: %s</string>
 
 </resources>
