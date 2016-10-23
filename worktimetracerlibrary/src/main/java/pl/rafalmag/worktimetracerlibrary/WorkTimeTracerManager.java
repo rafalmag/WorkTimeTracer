@@ -6,11 +6,20 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.j256.ormlite.android.AndroidConnectionSource;
+import com.j256.ormlite.android.apptools.OpenHelperManager;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.support.ConnectionSource;
+
 import org.joda.time.DateTime;
 import org.joda.time.Minutes;
 
+import java.sql.SQLException;
 import java.util.Observable;
 import java.util.Observer;
+
+import pl.rafalmag.worktimetracerlibrary.db.Event;
+import pl.rafalmag.worktimetracerlibrary.db.WorkTimeTracerOpenHelper;
 
 public class WorkTimeTracerManager {
 
@@ -27,6 +36,7 @@ public class WorkTimeTracerManager {
     private final TimeHolder startTimeHolder = new TimeHolder();
     private final TimeHolder stopTimeHolder = new TimeHolder();
     private final Context context;
+    private final WorkTimeTracerOpenHelper workTimeTracerOpenHelper;
 
     public WorkTimeTracerManager(Context context) {
         if (context == null) {
@@ -44,6 +54,7 @@ public class WorkTimeTracerManager {
         };
         startTimeHolder.addObserver(observer);
         stopTimeHolder.addObserver(observer);
+        workTimeTracerOpenHelper = OpenHelperManager.getHelper(context, WorkTimeTracerOpenHelper.class);
     }
 
     private static Time loadStartTime(Context context) {
@@ -81,6 +92,14 @@ public class WorkTimeTracerManager {
     }
 
     public void saveOverHours(Minutes newOverHours) {
+        try {
+            // TODO rename to OverHoursSaved
+            Dao<Event, Integer> dao = workTimeTracerOpenHelper.getDao(Event.class);
+            Event event = new Event();
+            dao.create(event);
+        } catch (SQLException e) {
+            Log.e(TAG, "Could not save saveOverHours event in db");
+        }
         int mins = newOverHours.getMinutes();
         boolean success = PreferenceManager.getDefaultSharedPreferences(context)
                 .edit()
