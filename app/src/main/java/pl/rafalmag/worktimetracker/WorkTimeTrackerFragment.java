@@ -1,10 +1,8 @@
 package pl.rafalmag.worktimetracker;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Vibrator;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -29,6 +27,7 @@ import butterknife.OnClick;
 import pl.rafalmag.worktimetracerlibrary.DateUtils;
 import pl.rafalmag.worktimetracerlibrary.MinutesHolder;
 import pl.rafalmag.worktimetracerlibrary.NonScrollableTimePicker;
+import pl.rafalmag.worktimetracerlibrary.PersistenceManager;
 import pl.rafalmag.worktimetracerlibrary.Time;
 import pl.rafalmag.worktimetracerlibrary.WorkTimeTracerManager;
 
@@ -55,29 +54,21 @@ public class WorkTimeTrackerFragment extends Fragment {
     TextView diffText;
 
     private OnTimeChangedListener onTimeChangedListener;
-    // to keep it from GC
-    // http://stackoverflow.com/questions/2542938/sharedpreferences-onsharedpreferencechangelistener-not-being-called
-    // -consistently
-    private final SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener = new SharedPreferences
-            .OnSharedPreferenceChangeListener() {
 
+    // strong reference
+    private final Observer overtimeObserver = new Observer() {
         @Override
-        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            if (key.equals(WorkTimeTracerManager.TOTAL_OVER_HOURS_AS_MINUTES)) {
-                Log.d(TAG, key + " changed");
-                Minutes minutes = Minutes.minutes(sharedPreferences.getInt(key, 0));
-                updateOverHoursText(minutes);
-            }
+        public void update(Observable observable, Object data) {
+            Log.d(TAG, "overtime changed, updating OvertimeText");
+            updateOvertimeText((Minutes) data);
         }
     };
     // strong reference
-    private final SharedPreferences.OnSharedPreferenceChangeListener workTimePreferenceChangeListenerForDiff = new SharedPreferences.OnSharedPreferenceChangeListener() {
+    private final Observer workTimeObserverForDiff = new Observer() {
         @Override
-        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            final MinutesHolder diffHolder = ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager().getDiffHolder();
-            if (key.equals(WorkTimeTracerManager.WORK_TIME)) {
-                updateDiffText(diffHolder.getMinutes());
-            }
+        public void update(Observable observable, Object data) {
+            MinutesHolder diffHolder = ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager().getDiffHolder();
+            updateDiffText(diffHolder.getMinutes());
         }
     };
     private final Observer diffHolderObserver = new Observer() {
@@ -130,12 +121,11 @@ public class WorkTimeTrackerFragment extends Fragment {
 
 
     private void initOverHoursText() {
-        PreferenceManager.getDefaultSharedPreferences(getActivity()).registerOnSharedPreferenceChangeListener
-                (preferenceChangeListener);
-        updateOverHoursText(((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager().getOverHours());
+        ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager().getOvertimeHolder().addObserver(overtimeObserver);
+        updateOvertimeText(((WorkTimeTrackerApp) getActivity().getApplication()).getPersistenceManager().getOvertime());
     }
 
-    private void updateOverHoursText(Minutes minutes) {
+    private void updateOvertimeText(Minutes minutes) {
         overHours.setText(getActivity().getString(R.string.overHours, DateUtils.minutesToText(minutes)));
     }
 
@@ -143,12 +133,12 @@ public class WorkTimeTrackerFragment extends Fragment {
         final MinutesHolder diffHolder = ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager().getDiffHolder();
         diffHolder.addObserver(diffHolderObserver);
 
-        PreferenceManager.getDefaultSharedPreferences(getActivity()).registerOnSharedPreferenceChangeListener(workTimePreferenceChangeListenerForDiff);
+        ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager().getWorkTimeHolder().addObserver(workTimeObserverForDiff);
         updateDiffText(diffHolder.getMinutes());
     }
 
     private void updateDiffText(Minutes diff) {
-        Minutes workTime = ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager().getNormalWorkHours();
+        Minutes workTime = ((WorkTimeTrackerApp) getActivity().getApplication()).getPersistenceManager().getWorkTime();
         Minutes workTimeDiff = diff.minus(workTime);
         String verboseDiff = " (" + (workTimeDiff.isGreaterThan(Minutes.ZERO) ? "+" : "") + DateUtils.minutesToText(workTimeDiff) + ")";
         diffText.setText(getActivity().getString(R.string.diff, DateUtils.minutesToText(diff) + verboseDiff));
@@ -172,12 +162,15 @@ public class WorkTimeTrackerFragment extends Fragment {
 
     @OnClick(R.id.log)
     public void log(View view) {
-        WorkTimeTracerManager workTimeTracerManager = ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager();
+        WorkTimeTrackerApp workTimeTrackerApp = (WorkTimeTrackerApp) getActivity().getApplication();
+        WorkTimeTracerManager workTimeTracerManager = workTimeTrackerApp.getWorkTimeTracerManager();
+        PersistenceManager persistenceManager = workTimeTrackerApp.getPersistenceManager();
         Minutes diff = workTimeTracerManager.getDiffHolder().getMinutes();
-        Minutes todayOverHours = diff.minus(workTimeTracerManager.getNormalWorkHours());
-        Minutes totalOverHours = workTimeTracerManager.getOverHours();
-        Minutes newOverHours = totalOverHours.plus(todayOverHours);
-        workTimeTracerManager.saveOverHours(newOverHours);
+        Minutes todayOvertime = diff.minus(persistenceManager.getWorkTime());
+        Minutes totalOvertime = persistenceManager.getOvertime();
+        Minutes newOvertime = totalOvertime.plus(todayOvertime);
+        persistenceManager.saveOvertime(newOvertime);
+        workTimeTracerManager.getOvertimeHolder().setMinutes(newOvertime);
         // android M - request permission done in main activity
         Vibrator vibe = (Vibrator) getActivity().getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
         vibe.vibrate(50); // 50 is time in ms
@@ -199,9 +192,9 @@ public class WorkTimeTrackerFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        PreferenceManager.getDefaultSharedPreferences(getActivity()).unregisterOnSharedPreferenceChangeListener(workTimePreferenceChangeListenerForDiff);
-        PreferenceManager.getDefaultSharedPreferences(getActivity()).unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
-        final MinutesHolder diffHolder = ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager().getDiffHolder();
-        diffHolder.deleteObserver(diffHolderObserver);
+        WorkTimeTracerManager workTimeTracerManager = ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager();
+        workTimeTracerManager.getWorkTimeHolder().deleteObserver(workTimeObserverForDiff);
+        workTimeTracerManager.getOvertimeHolder().deleteObserver(overtimeObserver);
+        workTimeTracerManager.getDiffHolder().deleteObserver(diffHolderObserver);
     }
 }

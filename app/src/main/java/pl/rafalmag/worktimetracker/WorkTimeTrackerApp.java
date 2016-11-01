@@ -3,6 +3,8 @@ package pl.rafalmag.worktimetracker;
 import android.app.Application;
 import android.util.Log;
 
+import pl.rafalmag.worktimetracerlibrary.PersistenceManager;
+import pl.rafalmag.worktimetracerlibrary.PreferencesPersistenceManager;
 import pl.rafalmag.worktimetracerlibrary.WorkTimeTracerManager;
 
 public class WorkTimeTrackerApp extends Application {
@@ -10,12 +12,14 @@ public class WorkTimeTrackerApp extends Application {
     private static final String TAG = WorkTimeTrackerApp.class.getCanonicalName();
 
     private WorkTimeTracerManager workTimeTracerManager;
+    private PersistenceManager persistenceManager;
 
     @Override
     public void onCreate() {
         super.onCreate();
         initExceptionHandler();
-        workTimeTracerManager = new WorkTimeTracerManager(this);
+        persistenceManager = new PreferencesPersistenceManager(this);
+        workTimeTracerManager = new WorkTimeTracerManager(persistenceManager);
     }
 
     private void initExceptionHandler() {
@@ -27,6 +31,10 @@ public class WorkTimeTrackerApp extends Application {
                 exceptionHandler.uncaughtException(thread, ex);
             }
         });
+    }
+
+    public PersistenceManager getPersistenceManager() {
+        return persistenceManager;
     }
 
     public WorkTimeTracerManager getWorkTimeTracerManager() {

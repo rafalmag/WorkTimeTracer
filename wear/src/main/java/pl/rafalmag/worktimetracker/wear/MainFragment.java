@@ -36,7 +36,7 @@ public class MainFragment extends Fragment {
         observer = new Observer() {
             @Override
             public void update(Observable observable, Object o) {
-                updateText();
+                updateMainText();
             }
         };
         return view;
@@ -49,7 +49,7 @@ public class MainFragment extends Fragment {
         workTimeTracerManager.getStartTimeHolder().addObserver(observer);
         workTimeTracerManager.getStopTimeHolder().addObserver(observer);
         workTimeTracerManager.getDiffHolder().addObserver(observer);
-        updateText();
+        updateMainText();
     }
 
     @Override
@@ -61,18 +61,19 @@ public class MainFragment extends Fragment {
         workTimeTracerManager.getDiffHolder().deleteObserver(observer);
     }
 
-    private void updateText() {
+    private void updateMainText() {
         WorkTimeTracerManager workTimeTracerManager = ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager();
 
-        Minutes overHours = workTimeTracerManager.getOverHours();
+        Minutes overtime = workTimeTracerManager.getOvertimeHolder().getMinutes();
         // on wear emulator the short time formatter for pl_PL contains AM/PM - on real watch it is ok
         DateFormat timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT, Locale.getDefault());
         String startTime = timeFormat.format(workTimeTracerManager.getStartTimeHolder().getTime().toDate());
         String stopTime = timeFormat.format(workTimeTracerManager.getStopTimeHolder().getTime().toDate());
         Minutes diff = workTimeTracerManager.getDiffHolder().getMinutes();
         String verboseDiff = getVerboseDiff(diff);
-        String text = "Over hours\n" +
-                DateUtils.minutesToText(overHours) +
+        // TODO localize this
+        String text = "Overtime\n" +
+                DateUtils.minutesToText(overtime) +
                 "\nStart " + startTime + "\n" +
                 "Stop " + stopTime + "\n" +
                 "Diff: " + DateUtils.minutesToText(diff) + "\n" +
@@ -82,7 +83,7 @@ public class MainFragment extends Fragment {
 
     @NonNull
     private String getVerboseDiff(Minutes diff) {
-        Minutes workTime = ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager().getNormalWorkHours();
+        Minutes workTime = ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager().getWorkTimeHolder().getMinutes();
         Minutes workTimeDiff = diff.minus(workTime);
         return " (" + (workTimeDiff.isGreaterThan(Minutes.ZERO) ? "+" : "") + DateUtils.minutesToText(workTimeDiff) + ")";
     }

@@ -15,6 +15,7 @@ import org.joda.time.Minutes;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import pl.rafalmag.worktimetracerlibrary.PersistenceManager;
 import pl.rafalmag.worktimetracerlibrary.WorkTimeTracerManager;
 
 
@@ -42,19 +43,22 @@ public class LogFragment extends Fragment {
         View view = inflater.inflate(R.layout.log, container, false);
         ButterKnife.bind(this, view);
 
-        // todo startActivityForResult() will give a callback. (dohh xD) Just override onActivityResult(int requestCode, int resultCode, Intent data)
         mDelayedView.setListener(new DelayedConfirmationView.DelayedConfirmationListener() {
             @Override
             public void onTimerFinished(View view) {
                 if (mDelayedViewRunning) {
                     // User didn't cancel, perform the action
-                    WorkTimeTracerManager workTimeTracerManager = ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager();
+                    WorkTimeTrackerApp workTimeTrackerApp = (WorkTimeTrackerApp) getActivity().getApplication();
+                    WorkTimeTracerManager workTimeTracerManager = workTimeTrackerApp.getWorkTimeTracerManager();
+                    PersistenceManager persistenceManager = workTimeTrackerApp.getPersistenceManager();
                     Minutes diff = workTimeTracerManager.getDiffHolder().getMinutes();
-                    Minutes todayOverHours = diff.minus(workTimeTracerManager.getNormalWorkHours());
-                    Minutes totalOverHours = workTimeTracerManager.getOverHours();
-                    Minutes newOverHours = totalOverHours.plus(todayOverHours);
-                    workTimeTracerManager.saveOverHours(newOverHours);
+                    Minutes todayOvertime = diff.minus(persistenceManager.getWorkTime());
+                    Minutes totalOvertime = persistenceManager.getOvertime();
+                    Minutes newOvertime = totalOvertime.plus(todayOvertime);
+                    persistenceManager.saveOvertime(newOvertime);
+                    workTimeTracerManager.getOvertimeHolder().setMinutes(newOvertime);
 
+                    // startActivityForResult displays ConfirmationActivity, and result from this will be passed to onActivityResult
                     Intent intent = new Intent(getActivity(), ConfirmationActivity.class);
                     intent.putExtra(ConfirmationActivity.EXTRA_ANIMATION_TYPE, ConfirmationActivity.SUCCESS_ANIMATION);
                     intent.putExtra(ConfirmationActivity.EXTRA_MESSAGE, getString(R.string.time_logged));
@@ -83,6 +87,7 @@ public class LogFragment extends Fragment {
         return view;
     }
 
+    // result from ConfirmationActivity
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == LOG_CONFIRMATION_REQUEST_CODE) {
