@@ -90,8 +90,17 @@ public class PreferencesPersistenceManager implements PersistenceManager {
 
     @Override
     public void saveWorkTime(Minutes workTime) {
-        //fixme implement this
-        throw new UnsupportedOperationException("todo");
+        int mins = workTime.getMinutes();
+        boolean success = PreferenceManager.getDefaultSharedPreferences(context)
+                .edit()
+                .putInt(WORK_TIME, mins)
+                // commit is blocking
+                .commit();
+        if (success) {
+            Log.i(TAG, "Saved work time (" + mins + " mins)");
+        } else {
+            Log.e(TAG, "Could not save work time (" + mins + " mins)... :(");
+        }
     }
 
 }
