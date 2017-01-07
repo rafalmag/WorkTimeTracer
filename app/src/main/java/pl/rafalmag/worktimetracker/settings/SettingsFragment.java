@@ -29,6 +29,7 @@ public class SettingsFragment extends PreferenceFragment {
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (key.equals(PreferencesPersistenceManager.TOTAL_OVER_HOURS_AS_MINUTES)) {
                 Log.d(TAG, key + " changed");
+                // in event sourcing here event could be produced
                 Minutes minutes = Minutes.minutes(sharedPreferences.getInt(key, 0));
                 ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager().getOvertimeHolder().setMinutes(minutes);
             }
@@ -39,6 +40,8 @@ public class SettingsFragment extends PreferenceFragment {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (key.equals(PreferencesPersistenceManager.WORK_TIME)) {
+                Log.d(TAG, key + " changed");
+                // in event sourcing here event could be produced
                 Minutes minutes = Minutes.minutes(sharedPreferences.getInt(key, 0));
                 ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager().getWorkTimeHolder().setMinutes(minutes);
             }
