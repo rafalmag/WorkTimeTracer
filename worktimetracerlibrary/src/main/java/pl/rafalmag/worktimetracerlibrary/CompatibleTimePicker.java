@@ -1,5 +1,6 @@
 package pl.rafalmag.worktimetracerlibrary;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
@@ -25,6 +26,7 @@ public class CompatibleTimePicker extends TimePicker {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @SuppressWarnings("deprecation")
     @Override
     public void setHour(int hour) {
@@ -35,6 +37,7 @@ public class CompatibleTimePicker extends TimePicker {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @SuppressWarnings("deprecation")
     @Override
     public int getHour() {
@@ -45,6 +48,7 @@ public class CompatibleTimePicker extends TimePicker {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @SuppressWarnings("deprecation")
     @Override
     public void setMinute(int minute) {
@@ -55,6 +59,7 @@ public class CompatibleTimePicker extends TimePicker {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @SuppressWarnings("deprecation")
     @Override
     public int getMinute() {
