@@ -25,7 +25,7 @@ fieldName=typeClass
 # --table-end--
 #################################
 # --table-start--
-dataClass=pl.rafalmag.worktimetracerlibrary.db.StartStopEvent
+dataClass=pl.rafalmag.worktimetracerlibrary.db.StartStopUpdatedEvent
 tableName=startstopevent
 # --table-fields-start--
 # --field-start--

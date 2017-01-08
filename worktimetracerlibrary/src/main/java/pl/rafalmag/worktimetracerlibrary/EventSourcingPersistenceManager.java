@@ -13,7 +13,7 @@ import java.sql.SQLException;
 
 import pl.rafalmag.worktimetracerlibrary.db.Event;
 import pl.rafalmag.worktimetracerlibrary.db.EventParser;
-import pl.rafalmag.worktimetracerlibrary.db.StartStopEvent;
+import pl.rafalmag.worktimetracerlibrary.db.StartStopUpdatedEvent;
 import pl.rafalmag.worktimetracerlibrary.db.WorkTimeTracerOpenHelper;
 
 public class EventSourcingPersistenceManager implements PersistenceManager {
@@ -42,14 +42,14 @@ public class EventSourcingPersistenceManager implements PersistenceManager {
             Event event = dao
                     .queryBuilder()
                     .orderBy("date", false)
-                    .where().eq("typeClass", StartStopEvent.class.getCanonicalName())
+                    .where().eq("typeClass", StartStopUpdatedEvent.class.getCanonicalName())
                     .queryForFirst();
             if (event == null) {
                 DateTime now = DateTime.now();
                 startTime = new Time(now.getHourOfDay(), now.getMinuteOfHour());
                 stopTime = new Time(now.getHourOfDay(), now.getMinuteOfHour());
             } else {
-                StartStopEvent startStopEvent = eventParser.parseEvent(event);
+                StartStopUpdatedEvent startStopEvent = eventParser.parseEvent(event);
                 startTime = startStopEvent.getStartTime();
                 stopTime = startStopEvent.getStopTime();
             }
@@ -73,7 +73,7 @@ public class EventSourcingPersistenceManager implements PersistenceManager {
     public void saveStartStopTime(Time startTime, Time stopTime) {
         try {
             Dao<Event, Integer> dao = workTimeTracerOpenHelper.getDao(Event.class);
-            StartStopEvent event = new StartStopEvent(startTime, stopTime);
+            StartStopUpdatedEvent event = new StartStopUpdatedEvent(startTime, stopTime);
             dao.create(event);
         } catch (SQLException e) {
             Log.e(TAG, "Could not save saveOverHours event in db");
