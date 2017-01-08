@@ -1,12 +1,11 @@
 package pl.rafalmag.worktimetracerlibrary.db;
 
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.Date;
 
-@DatabaseTable(tableName = "events")
-public class Event {
+//@DatabaseTable(tableName = "events")
+public abstract class Event {
 
     static final String TYPE = "TYPE";
 

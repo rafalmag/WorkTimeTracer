@@ -1,16 +1,23 @@
 package pl.rafalmag.worktimetracerlibrary.db;
 
 
+import com.j256.ormlite.table.DatabaseTable;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import pl.rafalmag.worktimetracerlibrary.Time;
 
+@DatabaseTable(tableName = "startstopevent")
 public class StartStopEvent extends Event {
     private static final String START_HOUR = "START_HOUR";
     private static final String START_MINS = "START_MINS";
     private static final String STOP_HOUR = "STOP_HOUR";
     private static final String STOP_MINS = "STOP_MINS";
+
+    // needed by ormlite
+    public StartStopEvent() {
+    }
 
     // called by reflection
     public StartStopEvent(Event event) {

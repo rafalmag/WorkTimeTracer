@@ -119,7 +119,6 @@ public class WorkTimeTrackerFragment extends Fragment {
         timePicker.setMinute(time.getMinutes());
     }
 
-
     private void initOverHoursText() {
         ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager().getOvertimeHolder().addObserver(overtimeObserver);
         updateOvertimeText(((WorkTimeTrackerApp) getActivity().getApplication()).getPersistenceManager().getOvertime());
