@@ -17,7 +17,7 @@ import pl.rafalmag.worktimetracerlibrary.R;
 public class WorkTimeTracerOpenHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "WorkTimeTracer.db";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     public WorkTimeTracerOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION, R.raw.ormlite_config);
@@ -34,19 +34,20 @@ public class WorkTimeTracerOpenHelper extends OrmLiteSqliteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource, int oldVersion, int newVersion) {
+    public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource,
+                          int oldVersion, int newVersion) {
         try {
-            Log.i(WorkTimeTracerOpenHelper.class.getName(), "onUpgrade");
+            Log.i(WorkTimeTracerOpenHelper.class.getName(),
+                    "onUpgrade from version " + oldVersion + " to version " + newVersion);
             TableUtils.dropTable(connectionSource, Event.class, true);
             // after we drop the old databases, we create the new ones
             onCreate(db, connectionSource);
         } catch (SQLException e) {
-            Log.e(WorkTimeTracerOpenHelper.class.getName(), "Can't drop database", e);
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Can't drop database, because of " + e.getMessage(), e);
         }
     }
 
-    public Dao<Event,Integer> getEventDao() throws SQLException {
+    public Dao<Event, Integer> getEventDao() throws SQLException {
         return getDao(Event.class);
     }
 

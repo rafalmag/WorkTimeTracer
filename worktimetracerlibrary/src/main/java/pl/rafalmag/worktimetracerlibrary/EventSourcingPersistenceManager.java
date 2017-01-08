@@ -7,6 +7,7 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 
 import org.joda.time.DateTime;
+import org.joda.time.Hours;
 import org.joda.time.Minutes;
 
 import java.sql.SQLException;
@@ -15,6 +16,7 @@ import pl.rafalmag.worktimetracerlibrary.db.Event;
 import pl.rafalmag.worktimetracerlibrary.db.EventParser;
 import pl.rafalmag.worktimetracerlibrary.db.StartStopUpdatedEvent;
 import pl.rafalmag.worktimetracerlibrary.db.WorkTimeTracerOpenHelper;
+import pl.rafalmag.worktimetracerlibrary.db.WorkTimeUpdatedEvent;
 
 public class EventSourcingPersistenceManager implements PersistenceManager {
 
@@ -34,6 +36,7 @@ public class EventSourcingPersistenceManager implements PersistenceManager {
         }
         workTimeTracerOpenHelper = OpenHelperManager.getHelper(context, WorkTimeTracerOpenHelper.class);
         initStartStopTime();
+        initWorkTime();
     }
 
     private void initStartStopTime() {
@@ -59,6 +62,26 @@ public class EventSourcingPersistenceManager implements PersistenceManager {
         }
     }
 
+    private void initWorkTime() {
+        try {
+            Dao<Event, Integer> dao = workTimeTracerOpenHelper.getEventDao();
+            Event event = dao
+                    .queryBuilder()
+                    .orderBy("date", false)
+                    .where().eq("typeClass", WorkTimeUpdatedEvent.class.getCanonicalName())
+                    .queryForFirst();
+            if (event == null) {
+                workTime = Hours.EIGHT.toStandardMinutes();
+            } else {
+                WorkTimeUpdatedEvent workTimeUpdatedEvent = eventParser.parseEvent(event);
+                workTime = workTimeUpdatedEvent.getWorkTime();
+            }
+        } catch (SQLException e) {
+            throw new IllegalStateException("Could not init work time, because of "
+                    + e.getMessage(), e);
+        }
+    }
+
     @Override
     public Time loadStartTime() {
         return startTime;
@@ -73,8 +96,7 @@ public class EventSourcingPersistenceManager implements PersistenceManager {
     public void saveStartStopTime(Time startTime, Time stopTime) {
         try {
             Dao<Event, Integer> dao = workTimeTracerOpenHelper.getDao(Event.class);
-            StartStopUpdatedEvent event = new StartStopUpdatedEvent(startTime, stopTime);
-            dao.create(event);
+            dao.create(new StartStopUpdatedEvent(startTime, stopTime));
         } catch (SQLException e) {
             Log.e(TAG, "Could not save saveOverHours event in db");
         }
@@ -99,6 +121,12 @@ public class EventSourcingPersistenceManager implements PersistenceManager {
 
     @Override
     public void saveWorkTime(Minutes workTime) {
-
+        try {
+            Dao<Event, Integer> dao = workTimeTracerOpenHelper.getDao(Event.class);
+            dao.create(new WorkTimeUpdatedEvent(workTime));
+        } catch (SQLException e) {
+            Log.e(TAG, "Could not save work time event in db");
+        }
+        this.workTime = workTime;
     }
 }

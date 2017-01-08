@@ -32,6 +32,7 @@ public class SettingsFragment extends PreferenceFragment {
                 // in event sourcing here event could be produced
                 Minutes minutes = Minutes.minutes(sharedPreferences.getInt(key, 0));
                 ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager().getOvertimeHolder().setMinutes(minutes);
+                ((WorkTimeTrackerApp) getActivity().getApplication()).getPersistenceManager().saveOvertime(minutes);
             }
         }
     };
@@ -44,6 +45,7 @@ public class SettingsFragment extends PreferenceFragment {
                 // in event sourcing here event could be produced
                 Minutes minutes = Minutes.minutes(sharedPreferences.getInt(key, 0));
                 ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager().getWorkTimeHolder().setMinutes(minutes);
+                ((WorkTimeTrackerApp) getActivity().getApplication()).getPersistenceManager().saveWorkTime(minutes);
             }
         }
     };
