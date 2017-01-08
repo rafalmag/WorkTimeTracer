@@ -14,6 +14,7 @@ import java.sql.SQLException;
 
 import pl.rafalmag.worktimetracerlibrary.db.Event;
 import pl.rafalmag.worktimetracerlibrary.db.EventParser;
+import pl.rafalmag.worktimetracerlibrary.db.OvertimeUpdatedEvent;
 import pl.rafalmag.worktimetracerlibrary.db.StartStopUpdatedEvent;
 import pl.rafalmag.worktimetracerlibrary.db.WorkTimeTracerOpenHelper;
 import pl.rafalmag.worktimetracerlibrary.db.WorkTimeUpdatedEvent;
@@ -27,8 +28,8 @@ public class EventSourcingPersistenceManager implements PersistenceManager {
 
     private Time startTime;
     private Time stopTime;
-    private Minutes overtime = Minutes.minutes(0);
-    private Minutes workTime = Minutes.minutes(8 * 60);
+    private Minutes overtime;
+    private Minutes workTime;
 
     public EventSourcingPersistenceManager(Context context) {
         if (context == null) {
@@ -37,6 +38,7 @@ public class EventSourcingPersistenceManager implements PersistenceManager {
         workTimeTracerOpenHelper = OpenHelperManager.getHelper(context, WorkTimeTracerOpenHelper.class);
         initStartStopTime();
         initWorkTime();
+        initOvertime();
     }
 
     private void initStartStopTime() {
@@ -82,6 +84,26 @@ public class EventSourcingPersistenceManager implements PersistenceManager {
         }
     }
 
+    private void initOvertime() {
+        try {
+            Dao<Event, Integer> dao = workTimeTracerOpenHelper.getEventDao();
+            Event event = dao
+                    .queryBuilder()
+                    .orderBy("date", false)
+                    .where().eq("typeClass", OvertimeUpdatedEvent.class.getCanonicalName())
+                    .queryForFirst();
+            if (event == null) {
+                overtime = Minutes.ZERO;
+            } else {
+                OvertimeUpdatedEvent overtimeUpdatedEvent = eventParser.parseEvent(event);
+                overtime = overtimeUpdatedEvent.getOvertime();
+            }
+        } catch (SQLException e) {
+            throw new IllegalStateException("Could not init overtime, because of "
+                    + e.getMessage(), e);
+        }
+    }
+
     @Override
     public Time loadStartTime() {
         return startTime;
@@ -105,8 +127,14 @@ public class EventSourcingPersistenceManager implements PersistenceManager {
     }
 
     @Override
-    public void saveOvertime(Minutes newOverHours) {
-
+    public void saveOvertime(Minutes overtime) {
+        try {
+            Dao<Event, Integer> dao = workTimeTracerOpenHelper.getDao(Event.class);
+            dao.create(new OvertimeUpdatedEvent(overtime));
+        } catch (SQLException e) {
+            Log.e(TAG, "Could not save overtime event in db");
+        }
+        this.overtime = overtime;
     }
 
     @Override

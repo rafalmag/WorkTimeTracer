@@ -59,7 +59,7 @@ public class WorkTimeTrackerFragment extends Fragment {
     private final Observer overtimeObserver = new Observer() {
         @Override
         public void update(Observable observable, Object data) {
-            Log.d(TAG, "overtime changed, updating OvertimeText");
+            Log.d(TAG, "overtime changed (" + data + "), updating OvertimeText");
             updateOvertimeText((Minutes) data);
         }
     };
