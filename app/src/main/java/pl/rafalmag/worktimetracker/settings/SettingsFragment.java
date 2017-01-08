@@ -9,8 +9,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.joda.time.DateTimeUtils;
 import org.joda.time.Minutes;
 
+import pl.rafalmag.worktimetracerlibrary.DateUtils;
+import pl.rafalmag.worktimetracerlibrary.EventSourcingPersistenceManager;
+import pl.rafalmag.worktimetracerlibrary.PersistenceManager;
 import pl.rafalmag.worktimetracerlibrary.PreferencesPersistenceManager;
 import pl.rafalmag.worktimetracker.R;
 import pl.rafalmag.worktimetracker.WorkTimeTrackerApp;
@@ -28,11 +32,13 @@ public class SettingsFragment extends PreferenceFragment {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (key.equals(PreferencesPersistenceManager.TOTAL_OVER_HOURS_AS_MINUTES)) {
-                Log.d(TAG, key + " changed");
                 // in event sourcing here event could be produced
                 Minutes minutes = Minutes.minutes(sharedPreferences.getInt(key, 0));
-                ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager().getOvertimeHolder().setMinutes(minutes);
+                Log.d(TAG, key + " changed to " + DateUtils.minutesToText(minutes));
+                // first set in persistence manager
                 ((WorkTimeTrackerApp) getActivity().getApplication()).getPersistenceManager().saveOvertime(minutes);
+                // this will refresh view
+                ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager().getOvertimeHolder().setMinutes(minutes);
             }
         }
     };
@@ -41,11 +47,13 @@ public class SettingsFragment extends PreferenceFragment {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (key.equals(PreferencesPersistenceManager.WORK_TIME)) {
-                Log.d(TAG, key + " changed");
                 // in event sourcing here event could be produced
                 Minutes minutes = Minutes.minutes(sharedPreferences.getInt(key, 0));
-                ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager().getWorkTimeHolder().setMinutes(minutes);
+                Log.d(TAG, key + " changed to " + DateUtils.minutesToText(minutes));
+                // first set in persistence manager
                 ((WorkTimeTrackerApp) getActivity().getApplication()).getPersistenceManager().saveWorkTime(minutes);
+                // this will refresh view, which uses value from persistence manager
+                ((WorkTimeTrackerApp) getActivity().getApplication()).getWorkTimeTracerManager().getWorkTimeHolder().setMinutes(minutes);
             }
         }
     };
@@ -60,10 +68,31 @@ public class SettingsFragment extends PreferenceFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+//        initPreferences(defaultSharedPreferences);
+
         defaultSharedPreferences.registerOnSharedPreferenceChangeListener(workTimePreferenceChangeListenerForDiff);
         defaultSharedPreferences.registerOnSharedPreferenceChangeListener(overtimePreferenceChangeListener);
         return view;
     }
+
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+//        initPreferences(defaultSharedPreferences);
+//    }
+
+//    private void initPreferences(SharedPreferences defaultSharedPreferences) {
+//        PersistenceManager persistenceManager = ((WorkTimeTrackerApp) getActivity().getApplication()).getPersistenceManager();
+//        int worktime = persistenceManager.getWorkTime().getMinutes();
+//        int overtime = persistenceManager.getOvertime().getMinutes();
+//        defaultSharedPreferences
+//                .edit()
+//                .putInt(PreferencesPersistenceManager.WORK_TIME, worktime)
+//                .putInt(PreferencesPersistenceManager.TOTAL_OVER_HOURS_AS_MINUTES, overtime)
+//                .commit();
+//    }
 
     @Override
     public void onDestroyView() {
