@@ -32,4 +32,27 @@ public class Time {
         return calendar;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Time time = (Time) o;
+
+        if (hours != time.hours) return false;
+        return minutes == time.minutes;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = hours;
+        result = 31 * result + minutes;
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Time{" + hours + " h " + minutes + " mins}";
+    }
 }

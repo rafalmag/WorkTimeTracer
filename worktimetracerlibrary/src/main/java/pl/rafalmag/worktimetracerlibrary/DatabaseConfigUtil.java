@@ -15,5 +15,6 @@ public class DatabaseConfigUtil extends OrmLiteConfigUtil {
 
 	public static void main(String[] args) throws SQLException, IOException {
 		writeConfigFile("ormlite_config.txt");
+		System.out.println("done");
 	}
 }
