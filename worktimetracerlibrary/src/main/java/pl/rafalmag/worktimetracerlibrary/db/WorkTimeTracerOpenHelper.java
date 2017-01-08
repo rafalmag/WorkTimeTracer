@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
@@ -16,7 +17,7 @@ import pl.rafalmag.worktimetracerlibrary.R;
 public class WorkTimeTracerOpenHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "WorkTimeTracer.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     public WorkTimeTracerOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION, R.raw.ormlite_config);
@@ -26,7 +27,6 @@ public class WorkTimeTracerOpenHelper extends OrmLiteSqliteOpenHelper {
     public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
         try {
             TableUtils.createTableIfNotExists(connectionSource, Event.class);
-            TableUtils.createTableIfNotExists(connectionSource, StartStopEvent.class);
         } catch (SQLException e) {
             Log.e(WorkTimeTracerOpenHelper.class.getName(), "Can't create database", e);
             throw new RuntimeException(e);
@@ -38,13 +38,16 @@ public class WorkTimeTracerOpenHelper extends OrmLiteSqliteOpenHelper {
         try {
             Log.i(WorkTimeTracerOpenHelper.class.getName(), "onUpgrade");
             TableUtils.dropTable(connectionSource, Event.class, true);
-            TableUtils.dropTable(connectionSource, StartStopEvent.class, true);
             // after we drop the old databases, we create the new ones
             onCreate(db, connectionSource);
         } catch (SQLException e) {
             Log.e(WorkTimeTracerOpenHelper.class.getName(), "Can't drop database", e);
             throw new RuntimeException(e);
         }
+    }
+
+    public Dao<Event,Integer> getEventDao() throws SQLException {
+        return getDao(Event.class);
     }
 
 }

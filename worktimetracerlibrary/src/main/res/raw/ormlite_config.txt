@@ -1,0 +1,49 @@
+#
+# generated on 2017/01/08 05:10:06
+#
+# --table-start--
+dataClass=pl.rafalmag.worktimetracerlibrary.db.Event
+tableName=events
+# --table-fields-start--
+# --field-start--
+fieldName=id
+generatedId=true
+# --field-end--
+# --field-start--
+fieldName=date
+# --field-end--
+# --field-start--
+fieldName=version
+# --field-end--
+# --field-start--
+fieldName=data
+# --field-end--
+# --field-start--
+fieldName=typeClass
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################
+# --table-start--
+dataClass=pl.rafalmag.worktimetracerlibrary.db.StartStopEvent
+tableName=startstopevent
+# --table-fields-start--
+# --field-start--
+fieldName=id
+generatedId=true
+# --field-end--
+# --field-start--
+fieldName=date
+# --field-end--
+# --field-start--
+fieldName=version
+# --field-end--
+# --field-start--
+fieldName=data
+# --field-end--
+# --field-start--
+fieldName=typeClass
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################

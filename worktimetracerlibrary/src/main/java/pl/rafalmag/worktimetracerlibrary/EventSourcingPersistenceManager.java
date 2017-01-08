@@ -11,6 +11,8 @@ import org.joda.time.Minutes;
 
 import java.sql.SQLException;
 
+import pl.rafalmag.worktimetracerlibrary.db.Event;
+import pl.rafalmag.worktimetracerlibrary.db.EventParser;
 import pl.rafalmag.worktimetracerlibrary.db.StartStopEvent;
 import pl.rafalmag.worktimetracerlibrary.db.WorkTimeTracerOpenHelper;
 
@@ -19,6 +21,7 @@ public class EventSourcingPersistenceManager implements PersistenceManager {
     private static final String TAG = EventSourcingPersistenceManager.class.getCanonicalName();
 
     private final WorkTimeTracerOpenHelper workTimeTracerOpenHelper;
+    private EventParser eventParser = new EventParser();
 
     private Time startTime;
     private Time stopTime;
@@ -35,13 +38,18 @@ public class EventSourcingPersistenceManager implements PersistenceManager {
 
     private void initStartStopTime() {
         try {
-            Dao<StartStopEvent, Integer> dao = workTimeTracerOpenHelper.getDao(StartStopEvent.class);
-            StartStopEvent startStopEvent = dao.queryBuilder().orderBy("date", false).queryForFirst();
-            if (startStopEvent == null) {
+            Dao<Event, Integer> dao = workTimeTracerOpenHelper.getEventDao();
+            Event event = dao
+                    .queryBuilder()
+                    .orderBy("date", false)
+                    .where().eq("typeClass", StartStopEvent.class.getCanonicalName())
+                    .queryForFirst();
+            if (event == null) {
                 DateTime now = DateTime.now();
                 startTime = new Time(now.getHourOfDay(), now.getMinuteOfHour());
                 stopTime = new Time(now.getHourOfDay(), now.getMinuteOfHour());
             } else {
+                StartStopEvent startStopEvent = eventParser.parseEvent(event);
                 startTime = startStopEvent.getStartTime();
                 stopTime = startStopEvent.getStopTime();
             }
@@ -64,7 +72,7 @@ public class EventSourcingPersistenceManager implements PersistenceManager {
     @Override
     public void saveStartStopTime(Time startTime, Time stopTime) {
         try {
-            Dao<StartStopEvent, Integer> dao = workTimeTracerOpenHelper.getDao(StartStopEvent.class);
+            Dao<Event, Integer> dao = workTimeTracerOpenHelper.getDao(Event.class);
             StartStopEvent event = new StartStopEvent(startTime, stopTime);
             dao.create(event);
         } catch (SQLException e) {

@@ -15,9 +15,9 @@ public class StartStopEvent extends Event {
     private static final String STOP_HOUR = "STOP_HOUR";
     private static final String STOP_MINS = "STOP_MINS";
 
-    // needed by ormlite
-    public StartStopEvent() {
-    }
+//    // needed by ormlite
+//    public StartStopEvent() {
+//    }
 
     // called by reflection
     public StartStopEvent(Event event) {
@@ -31,7 +31,6 @@ public class StartStopEvent extends Event {
     private static JSONObject createData(Time startTime, Time stopTime) {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put(TYPE, StartStopEvent.class.getCanonicalName());
             jsonObject.put(START_HOUR, startTime.getHours());
             jsonObject.put(START_MINS, startTime.getMinutes());
             jsonObject.put(STOP_HOUR, stopTime.getHours());

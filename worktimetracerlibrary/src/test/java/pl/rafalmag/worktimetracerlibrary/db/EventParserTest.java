@@ -16,7 +16,7 @@ public class EventParserTest {
         Time stop = new Time(16, 17);
         StartStopEvent startStopEvent = new StartStopEvent(start, stop);
         // when
-        StartStopEvent newStartStopEvent = (StartStopEvent) new EventParser().parseEvent(startStopEvent);
+        StartStopEvent newStartStopEvent = new EventParser().parseEvent(startStopEvent);
         // then
         assertThat(newStartStopEvent.getId(), equalTo(startStopEvent.getId()));
         assertThat(newStartStopEvent.getData(), equalTo(startStopEvent.getData()));
