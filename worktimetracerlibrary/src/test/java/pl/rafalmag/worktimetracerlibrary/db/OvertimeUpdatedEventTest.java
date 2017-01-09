@@ -19,7 +19,7 @@ public class OvertimeUpdatedEventTest {
         // when
         String toString = overtimeUpdatedEvent.toString();
         // then
-        assertThat(toString, equalTo("1 h (-30 min)"));
+        assertThat(toString, equalTo("New overtime 1 h (-30 min)"));
     }
 
     @Test
@@ -31,6 +31,6 @@ public class OvertimeUpdatedEventTest {
         // when
         String toString = overtimeUpdatedEvent.toString();
         // then
-        assertThat(toString, equalTo("1 h"));
+        assertThat(toString, equalTo("New overtime 1 h"));
     }
 }

@@ -60,6 +60,6 @@ public class OvertimeUpdatedEvent extends Event {
         } else {
             suffix = " (" + DateUtils.minutesToText(diff) + ")";
         }
-        return DateUtils.minutesToText(getOvertime()) + suffix;
+        return "New overtime "+ DateUtils.minutesToText(getOvertime()) + suffix;
     }
 }

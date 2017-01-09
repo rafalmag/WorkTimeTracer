@@ -11,12 +11,10 @@
         android:stretchColumns="*">
 
         <TableRow
-            android:id="@+id/header"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/date"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:ems="10"
@@ -24,24 +22,12 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/eventType"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:text="Event"
                 android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/text"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:text="Text"
-                android:textStyle="bold" />
         </TableRow>
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
     </TableLayout>
 </ScrollView>

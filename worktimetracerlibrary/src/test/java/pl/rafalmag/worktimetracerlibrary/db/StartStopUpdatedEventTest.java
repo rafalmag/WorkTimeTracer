@@ -18,7 +18,6 @@ public class StartStopUpdatedEventTest {
         // when
         String toString = startStopUpdatedEvent.toString();
         // then
-        assertThat(toString, equalTo("start 08:00, stop 16:00, diff 8 h"));
-
+        assertThat(toString, equalTo("New start 08:00, stop 16:00, diff 8 h"));
     }
 }

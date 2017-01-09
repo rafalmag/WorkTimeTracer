@@ -60,7 +60,7 @@ public class StartStopUpdatedEvent extends Event {
     public String toString() {
         Minutes diff = DateUtils.diff(getStartTime(), getStopTime());
         String diffText = DateUtils.minutesToText(diff);
-        return "start " + getStartTime().toString() +
+        return "New start " + getStartTime().toString() +
                 ", stop " + getStopTime().toString() +
                 ", diff " + diffText;
     }

@@ -9,12 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.joda.time.DateTimeUtils;
 import org.joda.time.Minutes;
 
 import pl.rafalmag.worktimetracerlibrary.DateUtils;
-import pl.rafalmag.worktimetracerlibrary.EventSourcingPersistenceManager;
-import pl.rafalmag.worktimetracerlibrary.PersistenceManager;
 import pl.rafalmag.worktimetracerlibrary.PreferencesPersistenceManager;
 import pl.rafalmag.worktimetracker.R;
 import pl.rafalmag.worktimetracker.WorkTimeTrackerApp;
@@ -68,31 +65,10 @@ public class SettingsFragment extends PreferenceFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-
-//        initPreferences(defaultSharedPreferences);
-
         defaultSharedPreferences.registerOnSharedPreferenceChangeListener(workTimePreferenceChangeListenerForDiff);
         defaultSharedPreferences.registerOnSharedPreferenceChangeListener(overtimePreferenceChangeListener);
         return view;
     }
-
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-//        initPreferences(defaultSharedPreferences);
-//    }
-
-//    private void initPreferences(SharedPreferences defaultSharedPreferences) {
-//        PersistenceManager persistenceManager = ((WorkTimeTrackerApp) getActivity().getApplication()).getPersistenceManager();
-//        int worktime = persistenceManager.getWorkTime().getMinutes();
-//        int overtime = persistenceManager.getOvertime().getMinutes();
-//        defaultSharedPreferences
-//                .edit()
-//                .putInt(PreferencesPersistenceManager.WORK_TIME, worktime)
-//                .putInt(PreferencesPersistenceManager.TOTAL_OVER_HOURS_AS_MINUTES, overtime)
-//                .commit();
-//    }
 
     @Override
     public void onDestroyView() {

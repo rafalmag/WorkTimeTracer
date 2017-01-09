@@ -16,7 +16,7 @@ public class WorkTimeUpdatedEventTest {
         // when
         String toString = workTimeUpdatedEvent.toString();
         // then
-        assertThat(toString, equalTo("8 h"));
+        assertThat(toString, equalTo("New work time 8 h"));
     }
 
 }

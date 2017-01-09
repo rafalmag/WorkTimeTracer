@@ -41,6 +41,6 @@ public class WorkTimeUpdatedEvent extends Event {
 
     @Override
     public String toString() {
-        return DateUtils.minutesToText(getWorkTime());
+        return "New work time "+DateUtils.minutesToText(getWorkTime());
     }
 }

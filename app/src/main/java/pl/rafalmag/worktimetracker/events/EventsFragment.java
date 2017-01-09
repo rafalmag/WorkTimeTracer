@@ -3,7 +3,6 @@ package pl.rafalmag.worktimetracker.events;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +25,7 @@ import pl.rafalmag.worktimetracker.R;
 
 public class EventsFragment extends Fragment {
 
-    private static final String TAG = EventsFragment.class.getCanonicalName();
+//    private static final String TAG = EventsFragment.class.getCanonicalName();
     private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     @BindView(R.id.table)
@@ -42,15 +41,12 @@ public class EventsFragment extends Fragment {
 
         try {
             Dao<Event, Integer> eventDao = workTimeTracerOpenHelper.getEventDao();
-            List<Event> events = eventDao.queryForAll();
+            List<Event> events = eventDao.queryBuilder().orderBy("date", true).query();
             for (Event event : events) {
                 TableRow tr = new TableRow(getActivity());
                 TextView dateText = new TextView(getActivity());
                 dateText.setText(DateFormat.format(DATE_FORMAT, event.getDate()));
                 tr.addView(dateText);
-                TextView typeText = new TextView(getActivity());
-                typeText.setText(getTypeSimpleName(event));
-                tr.addView(typeText);
                 TextView dataText = new TextView(getActivity());
                 dataText.setText(getDataText(event));
                 tr.addView(dataText);
@@ -67,12 +63,4 @@ public class EventsFragment extends Fragment {
         return new EventParser().parseEvent(event).toString();
     }
 
-    private String getTypeSimpleName(Event event) {
-        try {
-            return Class.forName(event.getTypeClass()).getSimpleName();
-        } catch (ClassNotFoundException e) {
-            Log.w(TAG, "Unknown typeClass: " + event.getTypeClass(), e);
-            return "Unknown class: " + event.getTypeClass();
-        }
-    }
 }
