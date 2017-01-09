@@ -22,6 +22,9 @@
         <activity
             android:name=".settings.SettingsActivity"
             android:label="@string/action_settings" />
+        <activity
+            android:name=".events.EventsActivity"
+            android:label="@string/action_events" />
     </application>
 
 </manifest>

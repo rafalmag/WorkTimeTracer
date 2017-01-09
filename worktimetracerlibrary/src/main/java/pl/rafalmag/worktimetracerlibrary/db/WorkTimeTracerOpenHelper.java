@@ -17,7 +17,7 @@ import pl.rafalmag.worktimetracerlibrary.R;
 public class WorkTimeTracerOpenHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "WorkTimeTracer.db";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
 
     public WorkTimeTracerOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION, R.raw.ormlite_config);

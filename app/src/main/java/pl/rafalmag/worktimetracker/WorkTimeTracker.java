@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import butterknife.ButterKnife;
+import pl.rafalmag.worktimetracker.events.EventsActivity;
 import pl.rafalmag.worktimetracker.settings.SettingsActivity;
 
 public class WorkTimeTracker extends AppCompatActivity {
@@ -53,6 +54,10 @@ public class WorkTimeTracker extends AppCompatActivity {
             case R.id.action_settings:
                 Log.d(TAG, "Menu action settings selected");
                 startActivity(new Intent(this, SettingsActivity.class));
+                return true;
+            case R.id.action_events:
+                Log.d(TAG, "Menu action events selected");
+                startActivity(new Intent(this, EventsActivity.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
