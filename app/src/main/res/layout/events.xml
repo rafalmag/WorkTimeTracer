@@ -3,31 +3,40 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <TableLayout
-        android:id="@+id/table"
+    <LinearLayout
+        android:id="@+id/layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:stretchColumns="*">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <TableRow
+        <!-- checkboxes -->
+
+        <TableLayout
+            android:id="@+id/table"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:stretchColumns="*">
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:text="@string/date"
-                android:textStyle="bold" />
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:text="@string/event"
-                android:textStyle="bold" />
-        </TableRow>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:text="@string/date"
+                    android:textStyle="bold" />
 
-    </TableLayout>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:text="@string/event"
+                    android:textStyle="bold" />
+            </TableRow>
+
+        </TableLayout>
+    </LinearLayout>
 </ScrollView>

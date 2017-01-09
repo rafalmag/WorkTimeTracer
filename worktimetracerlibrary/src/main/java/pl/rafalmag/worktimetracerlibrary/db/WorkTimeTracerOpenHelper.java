@@ -47,8 +47,13 @@ public class WorkTimeTracerOpenHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
-    public Dao<Event, Integer> getEventDao() throws SQLException {
-        return getDao(Event.class);
+    public Dao<Event, Integer> getEventDao() {
+        try {
+            return getDao(Event.class);
+        } catch (SQLException e) {
+            throw new IllegalStateException("Could not get dao for Event, because of "
+                    + e.getMessage(), e);
+        }
     }
 
 }
