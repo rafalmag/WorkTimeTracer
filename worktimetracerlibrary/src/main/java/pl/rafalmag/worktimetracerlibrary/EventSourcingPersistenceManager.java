@@ -130,7 +130,7 @@ public class EventSourcingPersistenceManager implements PersistenceManager {
     public void saveOvertime(Minutes overtime) {
         try {
             Dao<Event, Integer> dao = workTimeTracerOpenHelper.getDao(Event.class);
-            dao.create(new OvertimeUpdatedEvent(overtime));
+            dao.create(new OvertimeUpdatedEvent(this.overtime, overtime));
         } catch (SQLException e) {
             Log.e(TAG, "Could not save overtime event in db");
         }
