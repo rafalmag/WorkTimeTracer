@@ -13,5 +13,7 @@
     <string name="logged">Time logged</string>
     <string name="overHours">Over hours: %s</string>
     <string name="diff">Diff: %s</string>
+    <string name="date">Date</string>
+    <string name="event">Event</string>
 
 </resources>

@@ -18,14 +18,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:text="Date"
+                android:text="@string/date"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:text="Event"
+                android:text="@string/event"
                 android:textStyle="bold" />
         </TableRow>
 
