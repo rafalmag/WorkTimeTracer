@@ -1,9 +1,11 @@
 package pl.rafalmag.worktimetracerlibrary.db;
 
 
+import org.joda.time.Minutes;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import pl.rafalmag.worktimetracerlibrary.DateUtils;
 import pl.rafalmag.worktimetracerlibrary.Time;
 
 public class StartStopUpdatedEvent extends Event {
@@ -52,5 +54,14 @@ public class StartStopUpdatedEvent extends Event {
             throw new IllegalStateException("Could not get stop time from data " + data
                     + ", because of " + e.getMessage(), e);
         }
+    }
+
+    @Override
+    public String toString() {
+        Minutes diff = DateUtils.diff(getStartTime(), getStopTime());
+        String diffText = DateUtils.minutesToText(diff);
+        return "start " + getStartTime().toString() +
+                ", stop " + getStopTime().toString() +
+                ", diff " + diffText;
     }
 }

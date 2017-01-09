@@ -53,6 +53,6 @@ public class Time {
 
     @Override
     public String toString() {
-        return "Time{" + hours + " h " + minutes + " mins}";
+        return String.format("%02d:%02d", hours, minutes);
     }
 }

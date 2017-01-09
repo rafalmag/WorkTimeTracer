@@ -65,4 +65,12 @@ public class Event {
     public String getTypeClass() {
         return typeClass;
     }
+
+    @Override
+    public String toString() {
+        return "Event{" +
+                "typeClass='" + typeClass + '\'' +
+                ", data='" + data + '\'' +
+                '}';
+    }
 }

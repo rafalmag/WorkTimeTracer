@@ -4,6 +4,8 @@ import org.joda.time.Minutes;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import pl.rafalmag.worktimetracerlibrary.DateUtils;
+
 public class WorkTimeUpdatedEvent extends Event {
 
     private static final String WORK_TIME = "work_time";
@@ -35,5 +37,10 @@ public class WorkTimeUpdatedEvent extends Event {
             throw new IllegalStateException("Could not get work time from data " + data
                     + ", because of " + e.getMessage(), e);
         }
+    }
+
+    @Override
+    public String toString() {
+        return DateUtils.minutesToText(getWorkTime());
     }
 }

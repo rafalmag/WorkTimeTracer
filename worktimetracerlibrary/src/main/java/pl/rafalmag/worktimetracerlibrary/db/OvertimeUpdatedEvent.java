@@ -4,6 +4,8 @@ import org.joda.time.Minutes;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import pl.rafalmag.worktimetracerlibrary.DateUtils;
+
 public class OvertimeUpdatedEvent extends Event {
 
     private static final String TOTAL_OVER_HOURS_AS_MINUTES = "total_over_hours_as_mins";
@@ -47,5 +49,17 @@ public class OvertimeUpdatedEvent extends Event {
             throw new IllegalStateException("Could not get old overtime from data " + data
                     + ", because of " + e.getMessage(), e);
         }
+    }
+
+    @Override
+    public String toString() {
+        Minutes diff = getOvertime().minus(getOldOvertime());
+        String suffix;
+        if (diff.equals(Minutes.ZERO)) {
+            suffix = "";
+        } else {
+            suffix = " (" + DateUtils.minutesToText(diff) + ")";
+        }
+        return DateUtils.minutesToText(getOvertime()) + suffix;
     }
 }
