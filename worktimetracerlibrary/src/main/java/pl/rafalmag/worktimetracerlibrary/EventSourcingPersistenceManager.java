@@ -116,6 +116,10 @@ public class EventSourcingPersistenceManager implements PersistenceManager {
 
     @Override
     public void saveStartStopTime(Time startTime, Time stopTime) {
+        if (startTime.equals(this.startTime) && stopTime.equals(this.stopTime)) {
+            Log.d(TAG, "Start stop time did not change, nothing to save");
+            return;
+        }
         try {
             Dao<Event, Integer> dao = workTimeTracerOpenHelper.getDao(Event.class);
             dao.create(new StartStopUpdatedEvent(startTime, stopTime));

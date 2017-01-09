@@ -164,6 +164,8 @@ public class WorkTimeTrackerFragment extends Fragment {
         WorkTimeTrackerApp workTimeTrackerApp = (WorkTimeTrackerApp) getActivity().getApplication();
         WorkTimeTracerManager workTimeTracerManager = workTimeTrackerApp.getWorkTimeTracerManager();
         PersistenceManager persistenceManager = workTimeTrackerApp.getPersistenceManager();
+        persistenceManager.saveStartStopTime(workTimeTracerManager.getStartTimeHolder().getTime(),
+                workTimeTracerManager.getStopTimeHolder().getTime());
         // TODO move this logic out to persistence manager
         Minutes diff = workTimeTracerManager.getDiffHolder().getMinutes();
         Minutes todayOvertime = diff.minus(persistenceManager.getWorkTime());
