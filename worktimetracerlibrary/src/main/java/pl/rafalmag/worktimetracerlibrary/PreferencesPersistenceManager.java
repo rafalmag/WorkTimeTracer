@@ -77,6 +77,17 @@ public class PreferencesPersistenceManager implements PersistenceManager {
     }
 
     @Override
+    public void logWork() {
+        Minutes diff = DateUtils.diff(loadStartTime(), loadStopTime());
+        Minutes todayOvertime = diff.minus(getWorkTime());
+        Minutes totalOvertime = getOvertime();
+        Minutes newOvertime = totalOvertime.plus(todayOvertime);
+        Log.i(TAG, "Logging work new overtime " + DateUtils.minutesToText(newOvertime)
+                + ", diff " + DateUtils.minutesToText(diff));
+        saveOvertime(newOvertime);
+    }
+
+    @Override
     public Minutes getOvertime() {
         int mins = PreferenceManager.getDefaultSharedPreferences(context).getInt(TOTAL_OVER_HOURS_AS_MINUTES, 0);
         return Minutes.minutes(mins);

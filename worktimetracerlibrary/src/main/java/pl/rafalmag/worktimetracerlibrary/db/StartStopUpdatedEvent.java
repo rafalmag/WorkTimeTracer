@@ -1,14 +1,20 @@
 package pl.rafalmag.worktimetracerlibrary.db;
 
 
+import android.util.Log;
+
 import org.joda.time.Minutes;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import pl.rafalmag.worktimetracerlibrary.DateUtils;
+import pl.rafalmag.worktimetracerlibrary.EventSourcingPersistenceManager;
 import pl.rafalmag.worktimetracerlibrary.Time;
 
 public class StartStopUpdatedEvent extends Event {
+
+    private static final String TAG = StartStopUpdatedEvent.class.getCanonicalName();
+
     private static final String START_HOUR = "START_HOUR";
     private static final String START_MINS = "START_MINS";
     private static final String STOP_HOUR = "STOP_HOUR";
@@ -63,5 +69,12 @@ public class StartStopUpdatedEvent extends Event {
         return "New start " + getStartTime().toString() +
                 ", stop " + getStopTime().toString() +
                 ", diff " + diffText;
+    }
+
+
+    public void apply(EventSourcingPersistenceManager.ValueAccessor valueSetter) {
+        valueSetter.setStartTime(getStartTime());
+        valueSetter.setStopTime(getStopTime());
+        Log.d(TAG,"Applying "+this);
     }
 }

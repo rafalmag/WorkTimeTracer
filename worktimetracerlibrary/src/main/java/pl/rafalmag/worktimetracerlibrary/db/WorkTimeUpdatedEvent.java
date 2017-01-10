@@ -1,16 +1,21 @@
 package pl.rafalmag.worktimetracerlibrary.db;
 
+import android.util.Log;
+
 import org.joda.time.Minutes;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import pl.rafalmag.worktimetracerlibrary.DateUtils;
+import pl.rafalmag.worktimetracerlibrary.EventSourcingPersistenceManager;
 
 public class WorkTimeUpdatedEvent extends Event {
 
+    private static final String TAG = WorkTimeUpdatedEvent.class.getCanonicalName();
     private static final String WORK_TIME = "work_time";
 
     // called by reflection
+    @SuppressWarnings("unused")
     public WorkTimeUpdatedEvent(Event event) {
         super(event);
     }
@@ -42,5 +47,11 @@ public class WorkTimeUpdatedEvent extends Event {
     @Override
     public String toString() {
         return "New work time "+DateUtils.minutesToText(getWorkTime());
+    }
+
+
+    public void apply(EventSourcingPersistenceManager.ValueAccessor valueSetter) {
+        valueSetter.setWorkTime(getWorkTime());
+        Log.i(TAG,"Applying "+this);
     }
 }

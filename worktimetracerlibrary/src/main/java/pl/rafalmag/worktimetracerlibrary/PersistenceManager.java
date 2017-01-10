@@ -12,6 +12,8 @@ public interface PersistenceManager {
 
     void saveOvertime(Minutes newOverHours);
 
+    void logWork();
+
     Minutes getOvertime();
 
     Minutes getWorkTime();

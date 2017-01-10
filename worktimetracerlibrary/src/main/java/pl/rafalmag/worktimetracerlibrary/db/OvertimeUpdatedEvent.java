@@ -1,17 +1,22 @@
 package pl.rafalmag.worktimetracerlibrary.db;
 
+import android.util.Log;
+
 import org.joda.time.Minutes;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import pl.rafalmag.worktimetracerlibrary.DateUtils;
+import pl.rafalmag.worktimetracerlibrary.EventSourcingPersistenceManager;
 
 public class OvertimeUpdatedEvent extends Event {
 
+    private static final String TAG = OvertimeUpdatedEvent.class.getCanonicalName();
     private static final String TOTAL_OVER_HOURS_AS_MINUTES = "total_over_hours_as_mins";
     private static final String OLD_TOTAL_OVER_HOURS_AS_MINUTES = "old_total_over_hours_as_mins";
 
     // called by reflection
+    @SuppressWarnings("unused")
     public OvertimeUpdatedEvent(Event event) {
         super(event);
     }
@@ -61,5 +66,10 @@ public class OvertimeUpdatedEvent extends Event {
             suffix = " (" + DateUtils.minutesToText(diff) + ")";
         }
         return "New overtime "+ DateUtils.minutesToText(getOvertime()) + suffix;
+    }
+
+    public void apply(EventSourcingPersistenceManager.ValueAccessor valueSetter) {
+        valueSetter.setOvertime(getOvertime());
+        Log.i(TAG, "Applying "+this);
     }
 }

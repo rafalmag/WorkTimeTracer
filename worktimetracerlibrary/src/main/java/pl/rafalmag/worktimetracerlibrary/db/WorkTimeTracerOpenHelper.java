@@ -10,14 +10,18 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
+import org.joda.time.Hours;
+import org.joda.time.Minutes;
+
 import java.sql.SQLException;
 
 import pl.rafalmag.worktimetracerlibrary.R;
+import pl.rafalmag.worktimetracerlibrary.Time;
 
 public class WorkTimeTracerOpenHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "WorkTimeTracer.db";
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 6;
 
     public WorkTimeTracerOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION, R.raw.ormlite_config);
@@ -27,6 +31,10 @@ public class WorkTimeTracerOpenHelper extends OrmLiteSqliteOpenHelper {
     public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
         try {
             TableUtils.createTableIfNotExists(connectionSource, Event.class);
+            // init values
+            getEventDao().create(new WorkTimeUpdatedEvent(Hours.EIGHT.toStandardMinutes()));
+            getEventDao().create(new OvertimeUpdatedEvent(Minutes.ZERO, Minutes.ZERO));
+            getEventDao().create(new StartStopUpdatedEvent(new Time(8, 0), new Time(16, 0)));
         } catch (SQLException e) {
             Log.e(WorkTimeTracerOpenHelper.class.getName(), "Can't create database", e);
             throw new RuntimeException(e);

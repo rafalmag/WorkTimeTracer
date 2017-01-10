@@ -164,15 +164,14 @@ public class WorkTimeTrackerFragment extends Fragment {
         WorkTimeTrackerApp workTimeTrackerApp = (WorkTimeTrackerApp) getActivity().getApplication();
         WorkTimeTracerManager workTimeTracerManager = workTimeTrackerApp.getWorkTimeTracerManager();
         PersistenceManager persistenceManager = workTimeTrackerApp.getPersistenceManager();
-        persistenceManager.saveStartStopTime(workTimeTracerManager.getStartTimeHolder().getTime(),
+
+        persistenceManager.saveStartStopTime(
+                workTimeTracerManager.getStartTimeHolder().getTime(),
                 workTimeTracerManager.getStopTimeHolder().getTime());
-        // TODO move this logic out to persistence manager
-        Minutes diff = workTimeTracerManager.getDiffHolder().getMinutes();
-        Minutes todayOvertime = diff.minus(persistenceManager.getWorkTime());
-        Minutes totalOvertime = persistenceManager.getOvertime();
-        Minutes newOvertime = totalOvertime.plus(todayOvertime);
-        persistenceManager.saveOvertime(newOvertime);
+        persistenceManager.logWork();
+        Minutes newOvertime = persistenceManager.getOvertime();
         workTimeTracerManager.getOvertimeHolder().setMinutes(newOvertime);
+
         // android M - request permission done in main activity
         Vibrator vibe = (Vibrator) getActivity().getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
         vibe.vibrate(50); // 50 is time in ms

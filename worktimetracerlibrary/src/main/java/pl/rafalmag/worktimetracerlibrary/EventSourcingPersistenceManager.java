@@ -6,14 +6,14 @@ import android.util.Log;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 
-import org.joda.time.DateTime;
-import org.joda.time.Hours;
 import org.joda.time.Minutes;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import pl.rafalmag.worktimetracerlibrary.db.Event;
 import pl.rafalmag.worktimetracerlibrary.db.EventParser;
+import pl.rafalmag.worktimetracerlibrary.db.LogTimeEvent;
 import pl.rafalmag.worktimetracerlibrary.db.OvertimeUpdatedEvent;
 import pl.rafalmag.worktimetracerlibrary.db.StartStopUpdatedEvent;
 import pl.rafalmag.worktimetracerlibrary.db.WorkTimeTracerOpenHelper;
@@ -30,77 +30,62 @@ public class EventSourcingPersistenceManager implements PersistenceManager {
     private Time stopTime;
     private Minutes overtime;
     private Minutes workTime;
+    private final ValueAccessor valueSetter;
+
+    public class ValueAccessor {
+
+        public Minutes getWorkTime() {
+            return workTime;
+        }
+
+        public Time getStartTime() {
+            return startTime;
+        }
+
+        public Time getStopTime() {
+            return stopTime;
+        }
+
+        public void setStartTime(Time startTime) {
+            EventSourcingPersistenceManager.this.startTime = startTime;
+        }
+
+        public void setStopTime(Time stopTime) {
+            EventSourcingPersistenceManager.this.stopTime = stopTime;
+        }
+
+        public void setOvertime(Minutes overtime) {
+            EventSourcingPersistenceManager.this.overtime = overtime;
+        }
+
+        public void setWorkTime(Minutes workTime) {
+            EventSourcingPersistenceManager.this.workTime = workTime;
+        }
+
+        public Minutes getOvertime() {
+            return overtime;
+        }
+    }
 
     public EventSourcingPersistenceManager(Context context) {
         if (context == null) {
             throw new NullPointerException("Context cannot be null");
         }
         workTimeTracerOpenHelper = OpenHelperManager.getHelper(context, WorkTimeTracerOpenHelper.class);
-        initStartStopTime();
-        initWorkTime();
-        initOvertime();
-    }
 
-    private void initStartStopTime() {
+        Dao<Event, Integer> dao = workTimeTracerOpenHelper.getEventDao();
+        valueSetter = new ValueAccessor();
         try {
-            Dao<Event, Integer> dao = workTimeTracerOpenHelper.getEventDao();
-            Event event = dao
+            List<Event> events = dao
                     .queryBuilder()
-                    .orderBy("date", false)
-                    .where().eq("typeClass", StartStopUpdatedEvent.class.getCanonicalName())
-                    .queryForFirst();
-            if (event == null) {
-                DateTime now = DateTime.now();
-                startTime = new Time(now.getHourOfDay(), now.getMinuteOfHour());
-                stopTime = new Time(now.getHourOfDay(), now.getMinuteOfHour());
-            } else {
-                StartStopUpdatedEvent startStopEvent = eventParser.parseEvent(event);
-                startTime = startStopEvent.getStartTime();
-                stopTime = startStopEvent.getStopTime();
+                    .orderBy("date", true) // ascending
+                    .query();
+            for (Event event : events) {
+                Event parsedEvent = eventParser.parseEvent(event);
+                parsedEvent.apply(valueSetter);
             }
         } catch (SQLException e) {
-            throw new IllegalStateException("Could not init start stop time, because of "
-                    + e.getMessage(), e);
-        }
-    }
-
-    private void initWorkTime() {
-        try {
-            Dao<Event, Integer> dao = workTimeTracerOpenHelper.getEventDao();
-            Event event = dao
-                    .queryBuilder()
-                    .orderBy("date", false)
-                    .where().eq("typeClass", WorkTimeUpdatedEvent.class.getCanonicalName())
-                    .queryForFirst();
-            if (event == null) {
-                workTime = Hours.EIGHT.toStandardMinutes();
-            } else {
-                WorkTimeUpdatedEvent workTimeUpdatedEvent = eventParser.parseEvent(event);
-                workTime = workTimeUpdatedEvent.getWorkTime();
-            }
-        } catch (SQLException e) {
-            throw new IllegalStateException("Could not init work time, because of "
-                    + e.getMessage(), e);
-        }
-    }
-
-    private void initOvertime() {
-        try {
-            Dao<Event, Integer> dao = workTimeTracerOpenHelper.getEventDao();
-            Event event = dao
-                    .queryBuilder()
-                    .orderBy("date", false)
-                    .where().eq("typeClass", OvertimeUpdatedEvent.class.getCanonicalName())
-                    .queryForFirst();
-            if (event == null) {
-                overtime = Minutes.ZERO;
-            } else {
-                OvertimeUpdatedEvent overtimeUpdatedEvent = eventParser.parseEvent(event);
-                overtime = overtimeUpdatedEvent.getOvertime();
-            }
-        } catch (SQLException e) {
-            throw new IllegalStateException("Could not init overtime, because of "
-                    + e.getMessage(), e);
+            throw new IllegalStateException("Could not load events, because of " + e.getMessage(), e);
         }
     }
 
@@ -122,23 +107,36 @@ public class EventSourcingPersistenceManager implements PersistenceManager {
         }
         try {
             Dao<Event, Integer> dao = workTimeTracerOpenHelper.getDao(Event.class);
-            dao.create(new StartStopUpdatedEvent(startTime, stopTime));
+            StartStopUpdatedEvent startStopUpdatedEvent = new StartStopUpdatedEvent(startTime, stopTime);
+            dao.create(startStopUpdatedEvent);
+            startStopUpdatedEvent.apply(valueSetter);
         } catch (SQLException e) {
-            Log.e(TAG, "Could not save saveOverHours event in db");
+            Log.e(TAG, "Could not save saveOverHours event in db, because of " + e.getMessage(), e);
         }
-        this.startTime = startTime;
-        this.stopTime = stopTime;
     }
 
     @Override
     public void saveOvertime(Minutes overtime) {
         try {
             Dao<Event, Integer> dao = workTimeTracerOpenHelper.getDao(Event.class);
-            dao.create(new OvertimeUpdatedEvent(this.overtime, overtime));
+            OvertimeUpdatedEvent overtimeUpdatedEvent = new OvertimeUpdatedEvent(this.overtime, overtime);
+            dao.create(overtimeUpdatedEvent);
+            overtimeUpdatedEvent.apply(valueSetter);
         } catch (SQLException e) {
-            Log.e(TAG, "Could not save overtime event in db");
+            Log.e(TAG, "Could not save overtime event in db, because of " + e.getMessage(), e);
         }
-        this.overtime = overtime;
+    }
+
+    @Override
+    public void logWork() {
+        try {
+            Dao<Event, Integer> dao = workTimeTracerOpenHelper.getDao(Event.class);
+            LogTimeEvent logTimeEvent = new LogTimeEvent();
+            dao.create(logTimeEvent);
+            logTimeEvent.apply(valueSetter);
+        } catch (SQLException e) {
+            Log.e(TAG, "Could not save overtime event in db, because of " + e.getMessage(), e);
+        }
     }
 
     @Override
@@ -155,10 +153,11 @@ public class EventSourcingPersistenceManager implements PersistenceManager {
     public void saveWorkTime(Minutes workTime) {
         try {
             Dao<Event, Integer> dao = workTimeTracerOpenHelper.getDao(Event.class);
-            dao.create(new WorkTimeUpdatedEvent(workTime));
+            WorkTimeUpdatedEvent workTimeUpdatedEvent = new WorkTimeUpdatedEvent(workTime);
+            dao.create(workTimeUpdatedEvent);
+            workTimeUpdatedEvent.apply(valueSetter);
         } catch (SQLException e) {
             Log.e(TAG, "Could not save work time event in db");
         }
-        this.workTime = workTime;
     }
 }
