@@ -5,15 +5,15 @@ import org.junit.Test;
 import pl.rafalmag.worktimetracerlibrary.Time;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 public class StartStopUpdatedEventTest {
 
     @Test
     public void shouldToString() throws Exception {
         // given
-        Time startTime = new Time(8,0);
-        Time stopTime = new Time(16,0);
+        Time startTime = new Time(8, 0);
+        Time stopTime = new Time(16, 0);
         StartStopUpdatedEvent startStopUpdatedEvent = new StartStopUpdatedEvent(startTime, stopTime);
         // when
         String toString = startStopUpdatedEvent.toString();

@@ -75,6 +75,6 @@ public class StartStopUpdatedEvent extends Event {
     public void apply(EventSourcingPersistenceManager.ValueHolder valueHolder) {
         valueHolder.setStartTime(getStartTime());
         valueHolder.setStopTime(getStopTime());
-        Log.d(TAG,"Applying "+this);
+        Log.d(TAG, "Applying " + this);
     }
 }

@@ -46,12 +46,12 @@ public class WorkTimeUpdatedEvent extends Event {
 
     @Override
     public String toString() {
-        return "New work time "+DateUtils.minutesToText(getWorkTime());
+        return "New work time " + DateUtils.minutesToText(getWorkTime());
     }
 
 
     public void apply(EventSourcingPersistenceManager.ValueHolder valueHolder) {
         valueHolder.setWorkTime(getWorkTime());
-        Log.i(TAG,"Applying "+this);
+        Log.i(TAG, "Applying " + this);
     }
 }

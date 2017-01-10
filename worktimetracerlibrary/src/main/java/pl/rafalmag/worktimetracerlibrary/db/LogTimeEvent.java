@@ -15,6 +15,7 @@ public class LogTimeEvent extends Event {
     public LogTimeEvent(Event event) {
         super(event);
     }
+
     public LogTimeEvent() {
         super("");
     }
@@ -28,7 +29,7 @@ public class LogTimeEvent extends Event {
         Minutes diff = DateUtils.diff(valueHolder.getStartTime(), valueHolder.getStopTime());
         Minutes todayOvertime = diff.minus(valueHolder.getWorkTime());
         Minutes totalOvertime = valueHolder.getOvertime();
-        Minutes overtime =  totalOvertime.plus(todayOvertime);
+        Minutes overtime = totalOvertime.plus(todayOvertime);
         valueHolder.setOvertime(overtime);
         Log.i(TAG, "Logging work - new overtime " + DateUtils.minutesToText(overtime)
                 + ", diff " + DateUtils.minutesToText(diff));

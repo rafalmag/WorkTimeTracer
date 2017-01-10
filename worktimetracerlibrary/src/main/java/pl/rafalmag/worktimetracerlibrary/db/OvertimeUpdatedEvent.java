@@ -65,11 +65,11 @@ public class OvertimeUpdatedEvent extends Event {
         } else {
             suffix = " (" + DateUtils.minutesToText(diff) + ")";
         }
-        return "New overtime "+ DateUtils.minutesToText(getOvertime()) + suffix;
+        return "New overtime " + DateUtils.minutesToText(getOvertime()) + suffix;
     }
 
     public void apply(EventSourcingPersistenceManager.ValueHolder valueHolder) {
         valueHolder.setOvertime(getOvertime());
-        Log.i(TAG, "Applying "+this);
+        Log.i(TAG, "Applying " + this);
     }
 }

@@ -5,7 +5,6 @@ import android.util.Log;
 
 import pl.rafalmag.worktimetracerlibrary.EventSourcingPersistenceManager;
 import pl.rafalmag.worktimetracerlibrary.PersistenceManager;
-import pl.rafalmag.worktimetracerlibrary.PreferencesPersistenceManager;
 import pl.rafalmag.worktimetracerlibrary.WorkTimeTracerManager;
 
 public class WorkTimeTrackerApp extends Application {

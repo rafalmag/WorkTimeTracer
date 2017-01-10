@@ -31,11 +31,11 @@ public class TimeTest {
         // given
         int hours = 7;
         int minutes = 1;
-        Time time = new Time(hours,minutes);
+        Time time = new Time(hours, minutes);
         // when
         String toString = time.toString();
         // then
-        assertThat(toString,equalTo("07:01"));
+        assertThat(toString, equalTo("07:01"));
 
     }
 }

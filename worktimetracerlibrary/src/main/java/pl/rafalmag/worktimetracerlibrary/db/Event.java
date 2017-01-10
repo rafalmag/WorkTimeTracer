@@ -81,6 +81,6 @@ public class Event {
     }
 
     public void apply(EventSourcingPersistenceManager.ValueHolder valueHolder) {
-        Log.e(TAG,"operation unsupported in raw event");
+        Log.e(TAG, "operation unsupported in raw event");
     }
 }
