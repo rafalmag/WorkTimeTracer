@@ -131,7 +131,11 @@ public class EventSourcingPersistenceManager implements PersistenceManager {
     public void logWork() {
         try {
             Dao<Event, Integer> dao = workTimeTracerOpenHelper.getDao(Event.class);
-            LogTimeEvent logTimeEvent = new LogTimeEvent();
+            LogTimeEvent logTimeEvent = new LogTimeEvent(
+                    valueHolder.getStartTime(),
+                    valueHolder.getStopTime(),
+                    valueHolder.getWorkTime(),
+                    valueHolder.getOvertime());
             dao.create(logTimeEvent);
             logTimeEvent.apply(valueHolder);
         } catch (SQLException e) {

@@ -58,10 +58,10 @@ public class EventsTest {
         events.add(new OvertimeUpdatedEvent(Minutes.ZERO, Minutes.ZERO));
         events.add(new StartStopUpdatedEvent(new Time(8, 0), new Time(15, 0))); // 8h diff
         events.add(new OvertimeUpdatedEvent(Minutes.ZERO, Minutes.ONE)); // +1min OT
-        events.add(new LogTimeEvent()); // -59min OT
+        events.add(new LogTimeEvent(new Time(8, 0), new Time(15, 0), Hours.EIGHT.toStandardMinutes(), Minutes.ONE)); // -59min OT
         events.add(new WorkTimeUpdatedEvent(Hours.SIX.toStandardMinutes()));
         events.add(new StartStopUpdatedEvent(new Time(1, 0), new Time(8, 0))); // 7h diff
-        events.add(new LogTimeEvent()); // +1min OT
+        events.add(new LogTimeEvent(new Time(1, 0), new Time(8, 0), Hours.SIX.toStandardMinutes(), Minutes.minutes(-59))); // +1min OT
         EventSourcingPersistenceManager.ValueHolder valueHolder = new EventSourcingPersistenceManager.ValueHolder();
         // when
         for (Event event : events) {
