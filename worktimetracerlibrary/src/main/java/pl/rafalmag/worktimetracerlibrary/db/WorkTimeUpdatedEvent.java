@@ -50,7 +50,7 @@ public class WorkTimeUpdatedEvent extends Event {
     }
 
 
-    public void apply(EventSourcingPersistenceManager.ValueHolder valueHolder) {
+    public void applyTo(EventSourcingPersistenceManager.ValueHolder valueHolder) {
         valueHolder.setWorkTime(getWorkTime());
         Log.i(TAG, "Applying " + this);
     }

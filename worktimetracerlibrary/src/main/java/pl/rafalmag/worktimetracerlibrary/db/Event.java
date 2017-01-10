@@ -80,7 +80,7 @@ public class Event {
                 '}';
     }
 
-    public void apply(EventSourcingPersistenceManager.ValueHolder valueHolder) {
+    public void applyTo(EventSourcingPersistenceManager.ValueHolder valueHolder) {
         Log.e(TAG, "operation unsupported in raw event");
     }
 }

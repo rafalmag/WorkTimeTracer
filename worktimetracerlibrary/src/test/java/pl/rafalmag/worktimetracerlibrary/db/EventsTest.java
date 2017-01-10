@@ -41,7 +41,7 @@ public class EventsTest {
         EventSourcingPersistenceManager.ValueHolder valueHolder = new EventSourcingPersistenceManager.ValueHolder();
         // when
         for (Event event : events) {
-            event.apply(valueHolder);
+            event.applyTo(valueHolder);
         }
         // then
         assertThat(valueHolder.getWorkTime(), equalTo(Hours.EIGHT.toStandardMinutes()));
@@ -65,7 +65,7 @@ public class EventsTest {
         EventSourcingPersistenceManager.ValueHolder valueHolder = new EventSourcingPersistenceManager.ValueHolder();
         // when
         for (Event event : events) {
-            event.apply(valueHolder);
+            event.applyTo(valueHolder);
         }
         // then
         assertThat(valueHolder.getWorkTime(), equalTo(Hours.SIX.toStandardMinutes()));

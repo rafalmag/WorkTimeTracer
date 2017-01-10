@@ -55,7 +55,7 @@ public class LogTimeEvent extends Event {
         return getMessage();
     }
 
-    public void apply(EventSourcingPersistenceManager.ValueHolder valueHolder) {
+    public void applyTo(EventSourcingPersistenceManager.ValueHolder valueHolder) {
         Minutes diff = calculateDiff(valueHolder.getStartTime(), valueHolder.getStopTime());
         Minutes todayOvertime = calculateTodayOvertime(diff, valueHolder.getWorkTime());
         Minutes overtime = calculateNewOvertime(valueHolder.getOvertime(), todayOvertime);
