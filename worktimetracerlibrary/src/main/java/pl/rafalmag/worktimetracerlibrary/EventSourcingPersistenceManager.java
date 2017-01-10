@@ -26,44 +26,44 @@ public class EventSourcingPersistenceManager implements PersistenceManager {
     private final WorkTimeTracerOpenHelper workTimeTracerOpenHelper;
     private EventParser eventParser = new EventParser();
 
-    private Time startTime;
-    private Time stopTime;
-    private Minutes overtime;
-    private Minutes workTime;
-    private final ValueAccessor valueSetter;
+    private final ValueHolder valueHolder;
 
-    public class ValueAccessor {
-
-        public Minutes getWorkTime() {
-            return workTime;
-        }
+    public static class ValueHolder {
+        private Time startTime;
+        private Time stopTime;
+        private Minutes overtime;
+        private Minutes workTime;
 
         public Time getStartTime() {
             return startTime;
+        }
+
+        public void setStartTime(Time startTime) {
+            this.startTime = startTime;
         }
 
         public Time getStopTime() {
             return stopTime;
         }
 
-        public void setStartTime(Time startTime) {
-            EventSourcingPersistenceManager.this.startTime = startTime;
-        }
-
         public void setStopTime(Time stopTime) {
-            EventSourcingPersistenceManager.this.stopTime = stopTime;
-        }
-
-        public void setOvertime(Minutes overtime) {
-            EventSourcingPersistenceManager.this.overtime = overtime;
-        }
-
-        public void setWorkTime(Minutes workTime) {
-            EventSourcingPersistenceManager.this.workTime = workTime;
+            this.stopTime = stopTime;
         }
 
         public Minutes getOvertime() {
             return overtime;
+        }
+
+        public void setOvertime(Minutes overtime) {
+            this.overtime = overtime;
+        }
+
+        public Minutes getWorkTime() {
+            return workTime;
+        }
+
+        public void setWorkTime(Minutes workTime) {
+            this.workTime = workTime;
         }
     }
 
@@ -74,7 +74,7 @@ public class EventSourcingPersistenceManager implements PersistenceManager {
         workTimeTracerOpenHelper = OpenHelperManager.getHelper(context, WorkTimeTracerOpenHelper.class);
 
         Dao<Event, Integer> dao = workTimeTracerOpenHelper.getEventDao();
-        valueSetter = new ValueAccessor();
+        valueHolder = new ValueHolder();
         try {
             List<Event> events = dao
                     .queryBuilder()
@@ -82,7 +82,7 @@ public class EventSourcingPersistenceManager implements PersistenceManager {
                     .query();
             for (Event event : events) {
                 Event parsedEvent = eventParser.parseEvent(event);
-                parsedEvent.apply(valueSetter);
+                parsedEvent.apply(valueHolder);
             }
         } catch (SQLException e) {
             throw new IllegalStateException("Could not load events, because of " + e.getMessage(), e);
@@ -91,17 +91,17 @@ public class EventSourcingPersistenceManager implements PersistenceManager {
 
     @Override
     public Time loadStartTime() {
-        return startTime;
+        return valueHolder.getStartTime();
     }
 
     @Override
     public Time loadStopTime() {
-        return stopTime;
+        return valueHolder.getStopTime();
     }
 
     @Override
     public void saveStartStopTime(Time startTime, Time stopTime) {
-        if (startTime.equals(this.startTime) && stopTime.equals(this.stopTime)) {
+        if (startTime.equals(loadStartTime()) && stopTime.equals(loadStopTime())) {
             Log.d(TAG, "Start stop time did not change, nothing to save");
             return;
         }
@@ -109,7 +109,7 @@ public class EventSourcingPersistenceManager implements PersistenceManager {
             Dao<Event, Integer> dao = workTimeTracerOpenHelper.getDao(Event.class);
             StartStopUpdatedEvent startStopUpdatedEvent = new StartStopUpdatedEvent(startTime, stopTime);
             dao.create(startStopUpdatedEvent);
-            startStopUpdatedEvent.apply(valueSetter);
+            startStopUpdatedEvent.apply(valueHolder);
         } catch (SQLException e) {
             Log.e(TAG, "Could not save saveOverHours event in db, because of " + e.getMessage(), e);
         }
@@ -119,9 +119,9 @@ public class EventSourcingPersistenceManager implements PersistenceManager {
     public void saveOvertime(Minutes overtime) {
         try {
             Dao<Event, Integer> dao = workTimeTracerOpenHelper.getDao(Event.class);
-            OvertimeUpdatedEvent overtimeUpdatedEvent = new OvertimeUpdatedEvent(this.overtime, overtime);
+            OvertimeUpdatedEvent overtimeUpdatedEvent = new OvertimeUpdatedEvent(getOvertime(), overtime);
             dao.create(overtimeUpdatedEvent);
-            overtimeUpdatedEvent.apply(valueSetter);
+            overtimeUpdatedEvent.apply(valueHolder);
         } catch (SQLException e) {
             Log.e(TAG, "Could not save overtime event in db, because of " + e.getMessage(), e);
         }
@@ -133,7 +133,7 @@ public class EventSourcingPersistenceManager implements PersistenceManager {
             Dao<Event, Integer> dao = workTimeTracerOpenHelper.getDao(Event.class);
             LogTimeEvent logTimeEvent = new LogTimeEvent();
             dao.create(logTimeEvent);
-            logTimeEvent.apply(valueSetter);
+            logTimeEvent.apply(valueHolder);
         } catch (SQLException e) {
             Log.e(TAG, "Could not save overtime event in db, because of " + e.getMessage(), e);
         }
@@ -141,12 +141,12 @@ public class EventSourcingPersistenceManager implements PersistenceManager {
 
     @Override
     public Minutes getOvertime() {
-        return overtime;
+        return valueHolder.getOvertime();
     }
 
     @Override
     public Minutes getWorkTime() {
-        return workTime;
+        return valueHolder.getWorkTime();
     }
 
     @Override
@@ -155,7 +155,7 @@ public class EventSourcingPersistenceManager implements PersistenceManager {
             Dao<Event, Integer> dao = workTimeTracerOpenHelper.getDao(Event.class);
             WorkTimeUpdatedEvent workTimeUpdatedEvent = new WorkTimeUpdatedEvent(workTime);
             dao.create(workTimeUpdatedEvent);
-            workTimeUpdatedEvent.apply(valueSetter);
+            workTimeUpdatedEvent.apply(valueHolder);
         } catch (SQLException e) {
             Log.e(TAG, "Could not save work time event in db");
         }

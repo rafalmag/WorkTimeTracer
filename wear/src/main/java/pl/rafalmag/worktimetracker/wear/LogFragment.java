@@ -51,11 +51,9 @@ public class LogFragment extends Fragment {
                     WorkTimeTrackerApp workTimeTrackerApp = (WorkTimeTrackerApp) getActivity().getApplication();
                     WorkTimeTracerManager workTimeTracerManager = workTimeTrackerApp.getWorkTimeTracerManager();
                     PersistenceManager persistenceManager = workTimeTrackerApp.getPersistenceManager();
-                    Minutes diff = workTimeTracerManager.getDiffHolder().getMinutes();
-                    Minutes todayOvertime = diff.minus(persistenceManager.getWorkTime());
-                    Minutes totalOvertime = persistenceManager.getOvertime();
-                    Minutes newOvertime = totalOvertime.plus(todayOvertime);
-                    persistenceManager.saveOvertime(newOvertime);
+
+                    persistenceManager.logWork();
+                    Minutes newOvertime = persistenceManager.getOvertime();
                     workTimeTracerManager.getOvertimeHolder().setMinutes(newOvertime);
 
                     // startActivityForResult displays ConfirmationActivity, and result from this will be passed to onActivityResult

@@ -72,9 +72,9 @@ public class StartStopUpdatedEvent extends Event {
     }
 
 
-    public void apply(EventSourcingPersistenceManager.ValueAccessor valueSetter) {
-        valueSetter.setStartTime(getStartTime());
-        valueSetter.setStopTime(getStopTime());
+    public void apply(EventSourcingPersistenceManager.ValueHolder valueHolder) {
+        valueHolder.setStartTime(getStartTime());
+        valueHolder.setStopTime(getStopTime());
         Log.d(TAG,"Applying "+this);
     }
 }

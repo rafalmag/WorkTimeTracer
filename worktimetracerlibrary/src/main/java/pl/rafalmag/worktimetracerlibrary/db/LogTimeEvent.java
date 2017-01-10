@@ -24,12 +24,12 @@ public class LogTimeEvent extends Event {
         return "Log time event";
     }
 
-    public void apply(EventSourcingPersistenceManager.ValueAccessor valueSetter) {
-        Minutes diff = DateUtils.diff(valueSetter.getStartTime(), valueSetter.getStopTime());
-        Minutes todayOvertime = diff.minus(valueSetter.getWorkTime());
-        Minutes totalOvertime = valueSetter.getOvertime();
+    public void apply(EventSourcingPersistenceManager.ValueHolder valueHolder) {
+        Minutes diff = DateUtils.diff(valueHolder.getStartTime(), valueHolder.getStopTime());
+        Minutes todayOvertime = diff.minus(valueHolder.getWorkTime());
+        Minutes totalOvertime = valueHolder.getOvertime();
         Minutes overtime =  totalOvertime.plus(todayOvertime);
-        valueSetter.setOvertime(overtime);
+        valueHolder.setOvertime(overtime);
         Log.i(TAG, "Logging work - new overtime " + DateUtils.minutesToText(overtime)
                 + ", diff " + DateUtils.minutesToText(diff));
     }
