@@ -1,5 +1,12 @@
 language: android
 jdk: oraclejdk8
+
+licenses:
+    - 'android-sdk-preview-license-.+'
+    - 'android-sdk-license-.+'
+    - 'google-gdk-license-.+'
+    - 'intel-android-extra-license-.+'
+
 android:
   components:
     - tools
@@ -8,13 +15,11 @@ android:
     - android-23
     - extra-android-m2repository
     - extra-google-m2repository
+    - extra-android-support
+    - extra-google-google_play_services
 
 before_install:
  - chmod +x gradlew
 
 script: ./gradlew test
 
-licenses:
-    - 'android-sdk-preview-license-.+'
-    - 'android-sdk-license-.+'
-    - 'google-gdk-license-.+'
