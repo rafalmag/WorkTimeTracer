@@ -1,13 +1,56 @@
-#
-# generated on 2017/01/08 05:10:06
-#
 # --table-start--
 dataClass=pl.rafalmag.worktimetracerlibrary.db.Event
 tableName=events
 # --table-fields-start--
 # --field-start--
 fieldName=id
-generatedId=true
+id=true
+# --field-end--
+# --field-start--
+fieldName=date
+# --field-end--
+# --field-start--
+fieldName=version
+# --field-end--
+# --field-start--
+fieldName=data
+# --field-end--
+# --field-start--
+fieldName=typeClass
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################
+# --table-start--
+dataClass=pl.rafalmag.worktimetracerlibrary.db.LogTimeEvent
+tableName=logtimeevent
+# --table-fields-start--
+# --field-start--
+fieldName=id
+id=true
+# --field-end--
+# --field-start--
+fieldName=date
+# --field-end--
+# --field-start--
+fieldName=version
+# --field-end--
+# --field-start--
+fieldName=data
+# --field-end--
+# --field-start--
+fieldName=typeClass
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################
+# --table-start--
+dataClass=pl.rafalmag.worktimetracerlibrary.db.OvertimeUpdatedEvent
+tableName=overtimeupdatedevent
+# --table-fields-start--
+# --field-start--
+fieldName=id
+id=true
 # --field-end--
 # --field-start--
 fieldName=date
@@ -26,11 +69,34 @@ fieldName=typeClass
 #################################
 # --table-start--
 dataClass=pl.rafalmag.worktimetracerlibrary.db.StartStopUpdatedEvent
-tableName=startstopevent
+tableName=startstopupdatedevent
 # --table-fields-start--
 # --field-start--
 fieldName=id
-generatedId=true
+id=true
+# --field-end--
+# --field-start--
+fieldName=date
+# --field-end--
+# --field-start--
+fieldName=version
+# --field-end--
+# --field-start--
+fieldName=data
+# --field-end--
+# --field-start--
+fieldName=typeClass
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################
+# --table-start--
+dataClass=pl.rafalmag.worktimetracerlibrary.db.WorkTimeUpdatedEvent
+tableName=worktimeupdatedevent
+# --table-fields-start--
+# --field-start--
+fieldName=id
+id=true
 # --field-end--
 # --field-start--
 fieldName=date
