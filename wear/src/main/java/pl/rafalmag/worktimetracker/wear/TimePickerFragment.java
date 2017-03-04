@@ -2,10 +2,15 @@ package pl.rafalmag.worktimetracker.wear;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.view.OnApplyWindowInsetsListener;
+import android.support.v4.view.ViewCompat;
+import android.support.v4.view.WindowInsetsCompat;
+import android.support.wearable.view.BoxInsetLayout;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -87,6 +92,9 @@ public class TimePickerFragment extends Fragment {
     @BindView(R.id.timePicker)
     CompatibleTimePicker timePicker;
 
+    @BindView(R.id.timePickerBoxInsetLayout)
+    BoxInsetLayout timePickerBoxInsetLayout;
+
     private TimePicker.OnTimeChangedListener onTimeChangedListener;
 
     @Override
@@ -95,6 +103,20 @@ public class TimePickerFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         title.setText(getText(mode.getTextId()));
+
+        ViewCompat.setOnApplyWindowInsetsListener(view, new OnApplyWindowInsetsListener() {
+            @Override
+            public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
+                int systemWindowInsetBottom = insets.getSystemWindowInsetBottom();
+                if(systemWindowInsetBottom > 0){
+                    // timePickerBoxInsetLayout changes bottom padding
+                    timePickerBoxInsetLayout.setPadding(0,0,0,systemWindowInsetBottom);
+                    // top padding left unchanged in FrameLayout
+                }
+                return insets;
+            }
+        });
+
         initTimePicker();
         return view;
     }
