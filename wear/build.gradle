@@ -14,8 +14,8 @@ android {
         minSdkVersion 21
         targetSdkVersion 23
         // huawei watch api=23
-        versionCode 3
-        versionName "1.1.1"
+        versionCode 4
+        versionName "1.1.2"
     }
     buildTypes {
         release {

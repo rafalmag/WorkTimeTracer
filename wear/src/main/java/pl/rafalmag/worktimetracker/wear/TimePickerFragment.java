@@ -108,10 +108,11 @@ public class TimePickerFragment extends Fragment {
             @Override
             public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
                 int systemWindowInsetBottom = insets.getSystemWindowInsetBottom();
-                if(systemWindowInsetBottom > 0){
+                if (systemWindowInsetBottom > 0) {
                     // timePickerBoxInsetLayout changes bottom padding
-                    timePickerBoxInsetLayout.setPadding(0,0,0,systemWindowInsetBottom);
-                    // top padding left unchanged in FrameLayout
+                    timePickerBoxInsetLayout.setPadding(0, timePickerBoxInsetLayout.getPaddingTop(), 0, systemWindowInsetBottom);
+                    FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) timePicker.getLayoutParams();
+                    layoutParams.setMargins(layoutParams.leftMargin, 0, layoutParams.rightMargin, 0);
                 }
                 return insets;
             }
