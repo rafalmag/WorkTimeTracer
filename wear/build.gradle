@@ -23,7 +23,7 @@ android {
         release {
             keyAlias 'dummy'
             keyPassword 'dummy'
-            storeFile file('dummy')
+            storeFile file('.')
             storePassword 'dummy'
         }
     }

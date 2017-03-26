@@ -21,5 +21,6 @@ android:
 before_install:
  - chmod +x gradlew
 
-script: ./gradlew test
+# as release version requires signature (with key from keystore)
+script: ./gradlew testDebug
 
