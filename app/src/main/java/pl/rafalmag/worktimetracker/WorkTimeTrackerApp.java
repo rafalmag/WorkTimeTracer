@@ -4,6 +4,7 @@ import android.app.Application;
 import android.util.Log;
 
 import pl.rafalmag.worktimetracerlibrary.EventSourcingPersistenceManager;
+import pl.rafalmag.worktimetracerlibrary.NotificationAwarePersistenceManager;
 import pl.rafalmag.worktimetracerlibrary.PersistenceManager;
 import pl.rafalmag.worktimetracerlibrary.WorkTimeTracerManager;
 
@@ -19,7 +20,7 @@ public class WorkTimeTrackerApp extends Application {
         super.onCreate();
         initExceptionHandler();
 //        persistenceManager = new PreferencesPersistenceManager(this);
-        persistenceManager = new EventSourcingPersistenceManager(this);
+        persistenceManager = new NotificationAwarePersistenceManager(new EventSourcingPersistenceManager(this),this);
         workTimeTracerManager = new WorkTimeTracerManager(persistenceManager);
     }
 
