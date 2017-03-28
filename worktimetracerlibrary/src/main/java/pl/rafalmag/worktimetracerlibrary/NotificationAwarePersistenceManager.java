@@ -15,6 +15,7 @@ public class NotificationAwarePersistenceManager implements PersistenceManager {
     private final PersistenceManager persistenceManager;
     private final WorkEndNotificationScheduler workEndNotificationScheduler = new WorkEndNotificationScheduler();
 
+    // TODO make it event aware - so do not shown notification is work logged today.
     public NotificationAwarePersistenceManager(PersistenceManager persistenceManager, Context context) {
         this.persistenceManager = persistenceManager;
         this.context = context;
@@ -39,11 +40,18 @@ public class NotificationAwarePersistenceManager implements PersistenceManager {
 
     @NonNull
     private DateTime getExpectedEndTime(Time startTime, Minutes workTime) {
-        MutableDateTime expectedEndTime = new MutableDateTime();
-        expectedEndTime.setHourOfDay(startTime.getHours());
-        expectedEndTime.setMinuteOfHour(startTime.getMinutes());
-        expectedEndTime.addMinutes(workTime.getMinutes());
-        return expectedEndTime.toDateTime();
+        MutableDateTime dateTime = new MutableDateTime();
+        dateTime.setHourOfDay(startTime.getHours());
+        dateTime.setMinuteOfHour(startTime.getMinutes());
+        // if start time is after now, that mean it was yesterday, ie. now is 1:00, but start was at 23:00
+        if(dateTime.isAfterNow()){
+            dateTime.addDays(-1);
+        }
+        // add work time
+        dateTime.addMinutes(workTime.getMinutes());
+        // clear seconds, so alarm sets at "full minute"
+        dateTime.setSecondOfMinute(0);
+        return dateTime.toDateTime();
     }
 
     @Override

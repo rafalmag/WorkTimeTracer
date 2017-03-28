@@ -1,5 +1,6 @@
 package pl.rafalmag.worktimetracker;
 
+import android.app.Activity;
 import android.app.Application;
 import android.util.Log;
 
@@ -7,8 +8,9 @@ import pl.rafalmag.worktimetracerlibrary.EventSourcingPersistenceManager;
 import pl.rafalmag.worktimetracerlibrary.NotificationAwarePersistenceManager;
 import pl.rafalmag.worktimetracerlibrary.PersistenceManager;
 import pl.rafalmag.worktimetracerlibrary.WorkTimeTracerManager;
+import pl.rafalmag.worktimetracerlibrary.notification.MainActivityClassProvider;
 
-public class WorkTimeTrackerApp extends Application {
+public class WorkTimeTrackerApp extends Application implements MainActivityClassProvider {
 
     private static final String TAG = WorkTimeTrackerApp.class.getCanonicalName();
 
@@ -20,7 +22,9 @@ public class WorkTimeTrackerApp extends Application {
         super.onCreate();
         initExceptionHandler();
 //        persistenceManager = new PreferencesPersistenceManager(this);
-        persistenceManager = new NotificationAwarePersistenceManager(new EventSourcingPersistenceManager(this),this);
+        persistenceManager = new NotificationAwarePersistenceManager(
+                new EventSourcingPersistenceManager(this),
+                this);
         workTimeTracerManager = new WorkTimeTracerManager(persistenceManager);
     }
 
@@ -41,6 +45,11 @@ public class WorkTimeTrackerApp extends Application {
 
     public WorkTimeTracerManager getWorkTimeTracerManager() {
         return workTimeTracerManager;
+    }
+
+    @Override
+    public Class<? extends Activity> getMainActivityClass() {
+        return WorkTimeTracker.class;
     }
 }
 
