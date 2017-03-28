@@ -40,8 +40,8 @@ public class OverTimePreference extends DialogPreference {
 
     public OverTimePreference(Context ctxt, AttributeSet attrs) {
         super(ctxt, attrs);
-        setPositiveButtonText("Set");
-        setNegativeButtonText("Cancel");
+        setPositiveButtonText(ctxt.getString(R.string.date_time_set));
+        setNegativeButtonText(ctxt.getString(android.R.string.cancel));
         setDialogLayoutResource(R.layout.overtime);
     }
 

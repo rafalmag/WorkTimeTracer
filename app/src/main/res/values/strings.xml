@@ -15,5 +15,10 @@
     <string name="diff">Diff: %s</string>
     <string name="date">Date</string>
     <string name="event">Event</string>
+    <string name="date_time_set">Set</string>
+    <string name="workTime">Work time</string>
+    <string name="workTimeSummary">Set your average day work time</string>
+    <string name="overTime">Over time</string>
+    <string name="overTimeSummary">Set your overtime / undertime</string>
 
 </resources>

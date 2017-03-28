@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TimePicker;
 
+import pl.rafalmag.worktimetracker.R;
+
 /**
  * User: rafalmag
  * Date: 14.04.13
@@ -27,8 +29,8 @@ public class TimePreference extends DialogPreference {
 
     public TimePreference(Context ctxt, AttributeSet attrs) {
         super(ctxt, attrs);
-        setPositiveButtonText("Set");
-        setNegativeButtonText("Cancel");
+        setPositiveButtonText(ctxt.getString(R.string.date_time_set));
+        setNegativeButtonText(ctxt.getString(android.R.string.cancel));
     }
 
     @Override
