@@ -15,7 +15,6 @@ public class NotificationAwarePersistenceManager implements PersistenceManager {
     private final PersistenceManager persistenceManager;
     private final WorkEndNotificationScheduler workEndNotificationScheduler = new WorkEndNotificationScheduler();
 
-    // TODO make it event aware - so do not shown notification is work logged today.
     public NotificationAwarePersistenceManager(PersistenceManager persistenceManager, Context context) {
         this.persistenceManager = persistenceManager;
         this.context = context;
@@ -35,6 +34,7 @@ public class NotificationAwarePersistenceManager implements PersistenceManager {
     public void saveStartStopTime(Time startTime, Time stopTime) {
         persistenceManager.saveStartStopTime(startTime, stopTime);
         DateTime expectedEndTime = getExpectedEndTime(startTime, getWorkTime());
+        // TODO make it event aware - so do not shown notification is work logged today.
         workEndNotificationScheduler.scheduleWorkEndNotification(context, expectedEndTime);
     }
 
