@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_settings">Ustawienia</string>
+    <string name="action_events">Zdarzenia</string>
+    <string name="start_time">Czas startu:</string>
+    <string name="stop_time">Czas stopu:</string>
+    <string name="diff_time">Różnica:</string>
+    <string name="over_hours">Nadgodzin:</string>
+    <string name="now">Teraz</string>
+    <string name="log">Loguj</string>
+    <string name="over_time">nadgodziny</string>
+    <string name="under_time">niedogodziny</string>
+    <string name="logged">Zalogowano czas</string>
+    <string name="overHours">Nadgodzin: %s</string>
+    <string name="diff">Różnica: %s</string>
+    <string name="date">Data</string>
+    <string name="event">Zdarzenie</string>
+    <string name="date_time_set">Ustaw</string>
+    <string name="workTime">Czas pracy</string>
+    <string name="workTimeSummary">Ustaw średni dzienny czas pracy</string>
+    <string name="overTime">Nadgodziny</string>
+    <string name="overTimeSummary">Ustaw nadgodziny / niedogodziny</string>
+</resources>

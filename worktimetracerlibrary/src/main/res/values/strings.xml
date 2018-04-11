@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Work Time Tracer Library</string>
+    <string name="endWork">Time to end work</string>
 </resources>

@@ -40,8 +40,8 @@ public class OverTimePreference extends DialogPreference {
 
     public OverTimePreference(Context ctxt, AttributeSet attrs) {
         super(ctxt, attrs);
-        setPositiveButtonText("Set");
-        setNegativeButtonText("Cancel");
+        setPositiveButtonText(ctxt.getString(R.string.date_time_set));
+        setNegativeButtonText(ctxt.getString(android.R.string.cancel));
         setDialogLayoutResource(R.layout.overtime);
     }
 
@@ -94,16 +94,16 @@ public class OverTimePreference extends DialogPreference {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
                 updateInputState();
-                if (oldVal == 59 && newVal == 0) {
-                    int oldHour = hourPicker.getValue();
-                    hourPicker.setValue(oldHour + 1);
-                }
-                if (oldVal == 0 && newVal == 59) {
-                    int oldHour = hourPicker.getValue();
-                    if (oldHour >= 1) {
-                        hourPicker.setValue(oldHour - 1);
-                    }
-                }
+//                if (oldVal == 59 && newVal == 0) {
+//                    int oldHour = hourPicker.getValue();
+//                    hourPicker.setValue(oldHour + 1);
+//                }
+//                if (oldVal == 0 && newVal == 59) {
+//                    int oldHour = hourPicker.getValue();
+//                    if (oldHour >= 1) {
+//                        hourPicker.setValue(oldHour - 1);
+//                    }
+//                }
             }
         });
         minutePicker.setValue(lastMinute);

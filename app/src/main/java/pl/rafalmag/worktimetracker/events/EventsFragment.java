@@ -14,9 +14,6 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import com.j256.ormlite.android.apptools.OpenHelperManager;
-import com.j256.ormlite.dao.Dao;
-
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -31,7 +28,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import pl.rafalmag.worktimetracerlibrary.db.Event;
 import pl.rafalmag.worktimetracerlibrary.db.EventParser;
-import pl.rafalmag.worktimetracerlibrary.db.WorkTimeTracerOpenHelper;
+import pl.rafalmag.worktimetracerlibrary.db.EventsService;
 import pl.rafalmag.worktimetracker.R;
 
 public class EventsFragment extends Fragment {
@@ -48,18 +45,16 @@ public class EventsFragment extends Fragment {
     LinearLayout layout;
 
     Map<String, CheckBox> types = new HashMap<>();
-    private WorkTimeTracerOpenHelper workTimeTracerOpenHelper;
+    private EventsService eventsService;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.events, container, false);
         ButterKnife.bind(this, view);
-
-        workTimeTracerOpenHelper = OpenHelperManager.getHelper(getActivity(), WorkTimeTracerOpenHelper.class);
-        Dao<Event, Integer> eventDao = workTimeTracerOpenHelper.getEventDao();
+        eventsService = new EventsService(getActivity());
         try {
-            initTypes(eventDao);
-            initTable(eventDao);
+            initTypes();
+            initTable();
         } catch (SQLException e) {
             throw new IllegalStateException("Could not init events fragment, because of "
                     + e.getMessage(), e);
@@ -67,14 +62,11 @@ public class EventsFragment extends Fragment {
         return view;
     }
 
-    private void initTable(Dao<Event, Integer> eventDao) throws SQLException {
+    private void initTable() throws SQLException {
         int childCount = table.getChildCount();
         table.removeViews(1, childCount - 1);
-        List<Event> events = eventDao
-                .queryBuilder()
-                .orderBy("date", false)
-                .where().in("typeClass", getTypesToSelect())
-                .query();
+        Iterable<String> typesToSelect = getTypesToSelect();
+        List<Event> events = eventsService.getEvents(typesToSelect);
         for (Event event : events) {
             table.addView(createTableRow(event));
         }
@@ -91,8 +83,8 @@ public class EventsFragment extends Fragment {
         return typesToSelect;
     }
 
-    private void initTypes(Dao<Event, Integer> eventDao) throws SQLException {
-        List<String[]> results = eventDao.queryRaw("select distinct typeClass from events").getResults();
+    private void initTypes() throws SQLException {
+        List<String[]> results = eventsService.getTypes();
         for (String[] result : results) {
             CheckBox checkBox = new CheckBox(getActivity());
             checkBox.setText(getTypeSimpleText(result[0]));
@@ -101,7 +93,7 @@ public class EventsFragment extends Fragment {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     try {
-                        initTable(workTimeTracerOpenHelper.getEventDao());
+                        initTable();
                     } catch (SQLException e) {
                         Log.e(TAG, "Could not init table, because of " + e.getMessage(), e);
                     }

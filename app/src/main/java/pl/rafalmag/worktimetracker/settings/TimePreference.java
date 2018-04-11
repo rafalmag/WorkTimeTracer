@@ -6,7 +6,9 @@ import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.widget.TimePicker;
+
+import pl.rafalmag.worktimetracerlibrary.CompatibleTimePicker;
+import pl.rafalmag.worktimetracker.R;
 
 /**
  * User: rafalmag
@@ -23,17 +25,17 @@ public class TimePreference extends DialogPreference {
 
     private int lastHour = 0;
     private int lastMinute = 0;
-    private TimePicker picker;
+    private CompatibleTimePicker picker;
 
     public TimePreference(Context ctxt, AttributeSet attrs) {
         super(ctxt, attrs);
-        setPositiveButtonText("Set");
-        setNegativeButtonText("Cancel");
+        setPositiveButtonText(ctxt.getString(R.string.date_time_set));
+        setNegativeButtonText(ctxt.getString(android.R.string.cancel));
     }
 
     @Override
     protected View onCreateDialogView() {
-        picker = new TimePicker(getContext());
+        picker = new CompatibleTimePicker(getContext());
         picker.setIs24HourView(true);
         return picker;
     }
@@ -41,16 +43,16 @@ public class TimePreference extends DialogPreference {
     @Override
     protected void onBindDialogView(View v) {
         super.onBindDialogView(v);
-        picker.setCurrentHour(lastHour);
-        picker.setCurrentMinute(lastMinute);
+        picker.setHour(lastHour);
+        picker.setMinute(lastMinute);
     }
 
     @Override
     protected void onDialogClosed(boolean positiveResult) {
         super.onDialogClosed(positiveResult);
         if (positiveResult) {
-            lastHour = picker.getCurrentHour();
-            lastMinute = picker.getCurrentMinute();
+            lastHour = picker.getHour();
+            lastMinute = picker.getMinute();
             int mins = lastHour * 60 + lastMinute;
             if (callChangeListener(mins)) {
                 Log.d(TAG, "Persisting " + getKey() + " = " + mins + " mins");
