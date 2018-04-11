@@ -38,11 +38,11 @@ public class WorkTimeTrackerApp extends Application implements MainActivityClass
             }
         });
     }
-
+    @Override
     public PersistenceManager getPersistenceManager() {
         return persistenceManager;
     }
-
+    @Override
     public WorkTimeTracerManager getWorkTimeTracerManager() {
         return workTimeTracerManager;
     }

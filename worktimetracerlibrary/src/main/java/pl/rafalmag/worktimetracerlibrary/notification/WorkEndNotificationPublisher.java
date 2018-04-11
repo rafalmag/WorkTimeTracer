@@ -15,10 +15,14 @@ import android.util.Log;
 
 import org.joda.time.Hours;
 
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.Random;
 
 import pl.rafalmag.worktimetracerlibrary.R;
+import pl.rafalmag.worktimetracerlibrary.db.EventsService;
+import pl.rafalmag.worktimetracerlibrary.db.LogTimeEvent;
+import pl.rafalmag.worktimetracerlibrary.db.StartStopUpdatedEvent;
 
 public class WorkEndNotificationPublisher extends BroadcastReceiver {
 
@@ -29,42 +33,52 @@ public class WorkEndNotificationPublisher extends BroadcastReceiver {
     // public static final long AUTO_DISMISS_PERIOD_IN_MS = Minutes.ONE.toStandardDuration().getMillis();
 
     public void onReceive(Context context, Intent intent) {
-        // TODO check if should fire notification (ex. if the expected end time is in the past
-        // and work was not logged today
-        final int notifyId = new Random().nextInt();
-        // https://material.io/guidelines/patterns/notifications.html
-        // no peeking
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-        // permit to dismiss
-        builder.setOngoing(false);
-        builder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher));
-        builder.setSmallIcon(R.drawable.stop);
-        builder.setContentTitle(context.getString(R.string.endWork));
-        // Timestamp
-        builder.setWhen(new Date().getTime());
-        builder.setShowWhen(true);
-        // on click action
-        builder.setContentIntent(createClickedIntent(context));
-        // remove notification if clicked
-        builder.setAutoCancel(true);
+        EventsService eventsService = new EventsService(context);
+        try {
+            LogTimeEvent logTimeEvent = eventsService.getLastLogEvent();
+            StartStopUpdatedEvent startStopUpdatedEvent = eventsService.getLastStartStopEvent();
+        // check if should fire notification (ex. if the expected end time is in the past
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setCategory(Notification.CATEGORY_EVENT);
-            builder.setVisibility(Notification.VISIBILITY_PUBLIC);
+            if(logTimeEvent.getDate().before(startStopUpdatedEvent.getDate())){
+                // TODO ? and was not logged today
+                final int notifyId = new Random().nextInt();
+                // https://material.io/guidelines/patterns/notifications.html
+                // no peeking
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+                // permit to dismiss
+                builder.setOngoing(false);
+                builder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher));
+                builder.setSmallIcon(R.drawable.stop);
+                builder.setContentTitle(context.getString(R.string.endWork));
+                // Timestamp
+                builder.setWhen(new Date().getTime());
+                builder.setShowWhen(true);
+                // on click action
+                builder.setContentIntent(createClickedIntent(context));
+                // remove notification if clicked
+                builder.setAutoCancel(true);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    builder.setCategory(Notification.CATEGORY_EVENT);
+                    builder.setVisibility(Notification.VISIBILITY_PUBLIC);
+                }
+
+                final NotificationManager mNotificationManager =
+                        (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+                setAutoDismiss(notifyId, mNotificationManager);
+
+                Notification notification = builder.build();
+                // Making a sound or vibration
+                notification.defaults |= Notification.DEFAULT_VIBRATE;
+                notification.defaults |= Notification.DEFAULT_SOUND;
+
+                Log.d(TAG, "Publishing notification " + notifyId);
+                mNotificationManager.notify(notifyId, notification);
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
         }
-
-        final NotificationManager mNotificationManager =
-                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-        setAutoDismiss(notifyId, mNotificationManager);
-
-        Notification notification = builder.build();
-        // Making a sound or vibration
-        notification.defaults |= Notification.DEFAULT_VIBRATE;
-        notification.defaults |= Notification.DEFAULT_SOUND;
-
-        Log.d(TAG, "Publishing notification " + notifyId);
-        mNotificationManager.notify(notifyId, notification);
     }
 
     private void setAutoDismiss(final int notifyId, final NotificationManager mNotificationManager) {
