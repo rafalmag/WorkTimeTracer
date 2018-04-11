@@ -72,7 +72,7 @@ public class EventsFragment extends Fragment {
         table.removeViews(1, childCount - 1);
         List<Event> events = eventDao
                 .queryBuilder()
-                .orderBy("date", true)
+                .orderBy("date", false)
                 .where().in("typeClass", getTypesToSelect())
                 .query();
         for (Event event : events) {
