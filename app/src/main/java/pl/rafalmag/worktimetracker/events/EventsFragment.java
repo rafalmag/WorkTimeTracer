@@ -15,6 +15,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
+import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
 
 import org.joda.time.format.DateTimeFormat;
@@ -72,7 +73,7 @@ public class EventsFragment extends Fragment {
         table.removeViews(1, childCount - 1);
         List<Event> events = eventDao
                 .queryBuilder()
-                .orderBy("date", true)
+                .orderBy("date", false)
                 .where().in("typeClass", getTypesToSelect())
                 .query();
         for (Event event : events) {
