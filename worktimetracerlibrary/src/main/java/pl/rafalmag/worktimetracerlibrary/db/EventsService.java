@@ -21,7 +21,7 @@ public class EventsService {
     public List<Event> getEvents(Iterable<String> typesToSelect) throws SQLException {
         return eventDao
                 .queryBuilder()
-                .orderBy("date", false)
+                .orderBy("date", true)
                 .where().in("typeClass", typesToSelect)
                 .query();
     }
